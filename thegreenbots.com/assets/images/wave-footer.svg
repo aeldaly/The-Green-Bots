@@ -9,7 +9,7 @@
             <stop stop-color="#0269FD" offset="2.91250472%"></stop>
             <stop stop-color="#0369FC" offset="4.5053357%"></stop>
             <stop stop-color="#0468FB" offset="6.00516035%"></stop>
-            <stop stop-color="#1165EF" offset="25.4821693%"></stop>
+            <stop stop-color="#2eb82e" offset="25.4821693%"></stop>
             <stop stop-color="#1e7b1e" offset="100%"></stop>
         </radialGradient>
     </defs>
