@@ -91,7 +91,7 @@ def main(args):
         from autonomous_engine import BinaryDecisionDriverLayer
         left_or_right_layer = BinaryDecisionDriverLayer(
             PROJECT_PATH,
-            data_path='data/images/',
+            data_path='data/',
             model_name='left_or_right_layer',
             labels={0: 'left', 1: 'right'}
         )
@@ -101,7 +101,7 @@ def main(args):
 
         straight_layer = BinaryDecisionDriverLayer(
             PROJECT_PATH,
-            data_path='data/images/',
+            data_path='data/',
             model_name='straight_layer',
             labels={1: 'straight', 0: 'left_or_right'}
         )
