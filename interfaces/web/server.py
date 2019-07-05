@@ -1,27 +1,33 @@
 import argparse
 import json
-import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web, os.path
+import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+import os.path
+import subprocess
 from tornado.options import define, options
 from wifi import Cell, Scheme
 from datetime import datetime
 
 
-define("port", default=8000, help="run on the given port", type=int)
-CONFIG_FILE = '../../config/config.json'
-EVENTS_FILE = '../../logs/events.log'
+CONFIG_FILE = '/var/www/config/config.json'
+EVENTS_FILE = '/var/www/logs/events.log'
+
 
 class Application(tornado.web.Application):
     def __init__(self, model):
         self.model = model
         handlers = [
-            (r"/system", SystemHandler),
-            (r"/wifi-status", WifiStatusHandler),
-            (r"/wifi", WifiHandler),
-            (r"/logs", LogHandler),
-            (r"/events", EventHandler),
-            (r"/intelligence", IntelligenceHandler),
+            (r"/server/system", SystemHandler),
+            (r"/server/wifi-status", WifiStatusHandler),
+            (r"/server/wifi", WifiHandler),
+            (r"/server/logs", LogHandler),
+            (r"/server/events", EventHandler),
+            (r"/server/intelligence", IntelligenceHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
+
 
 class BaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -29,9 +35,12 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
+
 def add_event(new_line):
     with open(EVENTS_FILE, 'a+') as events_file:
-        events_file.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")+ ' - ' + str(new_line) + '\n')
+        events_file.write(datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
+
 
 def update_config_file(new_dict):
     '''
@@ -52,7 +61,7 @@ def update_config_file(new_dict):
     add_event('Updated Config File...')
     with open(CONFIG_FILE, 'r+') as config_file:
         data = json.load(config_file)
-        for k,v in new_dict.items():
+        for k, v in new_dict.items():
             data[k] = v
         config_file.seek(0)
         json.dump(data, config_file, indent=4)
@@ -66,50 +75,34 @@ def get_config_file():
     return config
 
 
-def tail(f, lines=20):
-    total_lines_wanted = lines
+def tail(filename, lines=20):
+    proc = subprocess.Popen(['tail', '-%d' % lines, filename],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
 
-    BLOCK_SIZE = 1024
-    f.seek(0, 2)
-    block_end_byte = f.tell()
-    lines_to_go = total_lines_wanted
-    block_number = -1
-    blocks = [] # blocks of size BLOCK_SIZE, in reverse order starting
-                # from the end of the file
-    while lines_to_go > 0 and block_end_byte > 0:
-        if (block_end_byte - BLOCK_SIZE > 0):
-            # read the last block we haven't yet read
-            f.seek(block_number*BLOCK_SIZE, 2)
-            blocks.append(f.read(BLOCK_SIZE))
-        else:
-            # file too small, start from begining
-            f.seek(0,0)
-            # only read what was not read
-            blocks.append(f.read(block_end_byte))
-        lines_found = blocks[-1].count('\n')
-        lines_to_go -= lines_found
-        block_end_byte -= BLOCK_SIZE
-        block_number -= 1
-    all_read_text = ''.join(reversed(blocks))
-    return '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
+    log, _err = proc.communicate()
+    try:
+        log = log.decode("utf-8")
+    except Exception as e:
+        return e
+    else:
+        return log
 
 
 class LogHandler(BaseHandler):
     def get(self):
-        # syslog_f = open('/var/log/syslog', 'r') # linux
-        syslog_f = open('/var/log/system.log', 'r') # mac TEST
-        self.write(json.dumps(tail(syslog_f, lines=100)))
+        self.write(json.dumps(tail('/var/log/syslog', lines=100)))
+
 
 class EventHandler(BaseHandler):
     def get(self):
-        event_f = open(EVENTS_FILE, 'r')
-        self.write(json.dumps(tail(event_f, lines=20)))
+        self.write(json.dumps(tail(EVENTS_FILE)))
 
 
 class IntelligenceHandler(BaseHandler):
     def get(self):
         config = get_config_file()
-        self.write(json.dumps(config['intelligence']))
+        self.write(json.dumps(config.get('intelligence')))
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -151,6 +144,7 @@ class SystemHandler(BaseHandler):
         add_event('Restarting to Factory')
         print('Reset to Factory...')
 
+
 class WifiStatusHandler(BaseHandler):
     def get(self):
         access_point_mode = True
@@ -171,6 +165,7 @@ You can access your Green Bot web interface by clicking on:<br> <a href="http://
 '''
         self.write(status)
 
+
 class WifiHandler(BaseHandler):
 
     def post(self):
@@ -188,7 +183,7 @@ class WifiHandler(BaseHandler):
         # scheme.activate()
         self.write(json.dumps({
         }))
-    
+
     def get(self):
         # wifis = Cell.all('wlan0')
         # print(wifis)
@@ -201,13 +196,13 @@ class WifiHandler(BaseHandler):
 
 def main(args):
     http_server = tornado.httpserver.HTTPServer(Application({}))
-    http_server.listen(options.port)
+    http_server.listen(args.port)
     tornado.ioloop.IOLoop.instance().start()
-
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Web Interface Server')
+
+    parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
     args = parser.parse_args()
     main(args)
-

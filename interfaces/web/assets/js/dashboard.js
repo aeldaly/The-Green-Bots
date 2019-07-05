@@ -6,12 +6,12 @@
 
     feather.replace()
 
-    const wifiUrl = 'http://localhost:8000/wifi';
-    const wifiStatusUrl = 'http://localhost:8000/wifi-status';
-    const systemUrl = 'http://localhost:8000/system';
-    const logsUrl = 'http://localhost:8000/logs';
-    const eventsUrl = 'http://localhost:8000/events';
-    const intelligenceUrl = 'http://localhost:8000/intelligence';
+    const wifiUrl = 'http://ubuntu.local/server/wifi';
+    const wifiStatusUrl = 'http://ubuntu.local/server/wifi-status';
+    const systemUrl = 'http://ubuntu.local/server/system';
+    const logsUrl = 'http://ubuntu.local/server/logs';
+    const eventsUrl = 'http://ubuntu.local/server/events';
+    const intelligenceUrl = 'http://ubuntu.local/server/intelligence';
 
     $.get(wifiStatusUrl, function (data) {
       var wifiStatusDiv = document.getElementById('wifistatus');
