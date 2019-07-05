@@ -14,22 +14,7 @@
     const intelligenceUrl = 'http://ubuntu.local/server/intelligence';
 
     $.getJSON(wifiStatusUrl, function (data) {
-      var wifiStatusDiv = document.getElementById('wifistatus');
-      if (data["access_point_mode"] == true){
-        wifiStatusDiv.innerHTML += (
-          '<p>' +
-          'Status: <span data-feather="cloud-off" style="color:orange;">Access Point Mode</span><br><br>' +
-          'You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>' +
-          '</p>'
-        );
-      } else {
-        wifiStatusDiv.innerHTML += (
-          '<p>' +
-          'Status: <span data-feather="cloud" style="color:green;">Connected</span><br><br>' +
-          'You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>' +
-          '</p>'
-        );
-      }
+      $('#wifistatus').val(data)
     });
   
     // Populate Logs
@@ -168,6 +153,23 @@
     });
   });
 
+  $("#updateForm").submit(function(e) {
+    e.preventDefault();
+  });
+
+  $('#updateButton').click( function() {
+    console.log('connectButton is clicked...')
+    $.ajax({
+        url: wifiUrl,
+        type: 'post',
+        dataType: 'json',
+        data: getFormDataInJson($('form#updateForm').serializeArray()),
+        success: function(data) {
+          console.log('Getting response back from git...')
+          $('#gitresult').val(data);
+        }
+    });
+  });
 
   });
 })($);

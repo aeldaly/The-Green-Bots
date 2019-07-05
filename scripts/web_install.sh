@@ -7,7 +7,7 @@ sudo apt -y upgrade
 
 sudo apt -y install nginx python3-pip wireless-tools
 
-sudo pip3 install tornado supervisor wifi
+sudo pip3 install tornado supervisor wifi ifparser
 
 sudo bash -c "cat > /etc/nginx/nginx.conf" << EOL
 user www-data;

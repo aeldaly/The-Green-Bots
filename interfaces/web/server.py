@@ -1,15 +1,17 @@
 import argparse
 import json
+import os.path
+import subprocess
+from datetime import datetime
+
+import netifaces
+from wifi import Cell, Scheme
+
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-import os.path
-import subprocess
-import netifaces
 from tornado.options import define, options
-from wifi import Cell, Scheme
-from datetime import datetime
 
 
 CONFIG_FILE = '/var/www/config/config.json'
@@ -26,6 +28,7 @@ class Application(tornado.web.Application):
             (r"/server/logs", LogHandler),
             (r"/server/events", EventHandler),
             (r"/server/intelligence", IntelligenceHandler),
+            (r"/server/update", UpdateHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -91,6 +94,29 @@ def tail(filename, lines=20):
     return cmd(['tail', '-%d' % lines, filename])
 
 
+def restart_supervisord():
+    add_event('Restarting supervisord now ...')
+    cmd(['sudo', 'killall', 'supervisord'])
+    cmd(['sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
+
+
+class UpdateHandler(BaseHandler):
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        tmp_destination = '/tmp/thegreenbots'
+        final_destination = '/opt/thegreenbots'
+        add_event('Updating The Green Bot local repository...')
+        result = cmd(['git', '-b', data.get('gitbranch', 'master'), '--single-branch', '--depth', '1', 'clone', data.get('gitrepo'), tmp_destination])
+        result += 'Storing new cloned repo on %s\n' % tmp_destination
+        result += 'Replacing old repo at %s with new cloned repo from %s\n' % (final_destination, tmp_destination)
+        result += 'Restarting supervisord...\n'
+        result += 'You need to refresh this page!\n'
+        cmd(['mv', tmp_destination, final_destination])
+        add_event('UPDATING!\n\t' + result)
+        self.write(json.dumps(result))
+        restart_supervisord()
+
+
 class LogHandler(BaseHandler):
     def get(self):
         self.write(json.dumps(tail('/var/log/syslog', lines=100)))
@@ -149,18 +175,8 @@ class SystemHandler(BaseHandler):
 
 class WifiStatusHandler(BaseHandler):
     def get(self):
-        access_point_mode = True
-        connected = True
-        if not access_point_mode and connected:
-            self.write(json.dumps({
-                'access_point_mode': False,
-                'ssid': 'GET IT FROM /etc/netplan/wireless.yaml'
-            }))
-        elif access_point_mode:
-            self.write(json.dumps({
-                'access_point_mode': True,
-                'ssid': 'TheGreenBot'
-            }))
+        wlan0 = cmd(['iwconfig', 'wlan0'])
+        self.write(json.dumps(wlan0))
 
 
 class WifiHandler(BaseHandler):
@@ -195,12 +211,15 @@ network:
         SSIDs = [wifi.ssid for wifi in wifis]
         self.write(json.dumps(SSIDs))
 
+    def generate_wireless_yaml(self, data):
+        return WifiHandler.WIRELESS_YAML_TEMPLATE % data
+
     def configure_netplan(self, data):
-        wireless_yaml = WifiHandler.WIRELESS_YAML_TEMPLATE.format(data)
+        wireless_yaml = self.generate_wireless_yaml(data)
         with open('/etc/netplan/wireless.yaml', 'w+') as wirelesss_yaml_f:
             wirelesss_yaml_f.write(wireless_yaml)
-            cmd(['netplan', 'generate'])
-            cmd(['netplan', 'apply'])
+            cmd(['sudo', 'netplan', 'generate'], shell=True)
+            cmd(['sudo', 'netplan', 'apply'], shell=True)
             ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
             return ip
         
