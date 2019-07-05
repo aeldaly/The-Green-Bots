@@ -13,9 +13,23 @@
     const eventsUrl = 'http://ubuntu.local/server/events';
     const intelligenceUrl = 'http://ubuntu.local/server/intelligence';
 
-    $.get(wifiStatusUrl, function (data) {
+    $.getJSON(wifiStatusUrl, function (data) {
       var wifiStatusDiv = document.getElementById('wifistatus');
-      wifiStatusDiv.innerHTML += data;
+      if (data["access_point_mode"] == true){
+        wifiStatusDiv.innerHTML += (
+          '<p>' +
+          'Status: <span data-feather="cloud-off" style="color:orange;">Access Point Mode</span><br><br>' +
+          'You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>' +
+          '</p>'
+        );
+      } else {
+        wifiStatusDiv.innerHTML += (
+          '<p>' +
+          'Status: <span data-feather="cloud" style="color:green;">Connected</span><br><br>' +
+          'You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>' +
+          '</p>'
+        );
+      }
     });
   
     // Populate Logs

@@ -6,6 +6,7 @@ import tornado.options
 import tornado.web
 import os.path
 import subprocess
+import netifaces
 from tornado.options import define, options
 from wifi import Cell, Scheme
 from datetime import datetime
@@ -75,11 +76,8 @@ def get_config_file():
     return config
 
 
-def tail(filename, lines=20):
-    proc = subprocess.Popen(['tail', '-%d' % lines, filename],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-
+def cmd(command):
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log, _err = proc.communicate()
     try:
         log = log.decode("utf-8")
@@ -87,6 +85,10 @@ def tail(filename, lines=20):
         return e
     else:
         return log
+
+
+def tail(filename, lines=20):
+    return cmd(['tail', '-%d' % lines, filename])
 
 
 class LogHandler(BaseHandler):
@@ -134,11 +136,11 @@ class SystemHandler(BaseHandler):
 
     def _shutdown(self):
         add_event('Shutting Down')
-        print('Shutting down...')
+        cmd(['shutdown', '-h', 'now'])
 
     def _reboot(self):
         add_event('Rebooting')
-        print('Rebooting...')
+        cmd(['reboot'])
 
     def _reset_factory(self):
         add_event('Restarting to Factory')
@@ -150,23 +152,30 @@ class WifiStatusHandler(BaseHandler):
         access_point_mode = True
         connected = True
         if not access_point_mode and connected:
-            status = '''
-<p>
-Status: <span data-feather="cloud" style="color:green;">Connected</span><br><br>
-You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>
-</p>
-'''
+            self.write(json.dumps({
+                'access_point_mode': False,
+                'ssid': 'GET IT FROM /etc/netplan/wireless.yaml'
+            }))
         elif access_point_mode:
-            status = '''
-<p>
-Status: <span data-feather="cloud-off" style="color:orange;">Access Point Mode</span><br><br>
-You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>
-</p>
-'''
-        self.write(status)
+            self.write(json.dumps({
+                'access_point_mode': True,
+                'ssid': 'TheGreenBot'
+            }))
 
 
 class WifiHandler(BaseHandler):
+    WIRELESS_YAML_TEMPLATE = '''
+network:
+  version: 2
+  renderer: networkd
+  wifis:
+    wlan0:
+      dhcp4: yes
+      dhcp6: yes
+      access-points:
+        "%(ssid)s":
+          password: "%(password)s"
+'''
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -177,22 +186,24 @@ class WifiHandler(BaseHandler):
                 'password': data['password'],
             }
         })
-        print(data)
-        # scheme = Scheme.find('wlan0', ssid_name)
-        # scheme.save()
-        # scheme.activate()
-        self.write(json.dumps({
-        }))
+        new_ip = self.configure_netplan(data)
+        self.write(json.dumps(new_ip))
+
 
     def get(self):
-        # wifis = Cell.all('wlan0')
-        # print(wifis)
-        wifis = [
-            'BELL884-ng5',
-            'home'
-        ]
-        self.write(json.dumps(wifis))
+        wifis = Cell.all('wlan0')
+        SSIDs = [wifi.ssid for wifi in wifis]
+        self.write(json.dumps(SSIDs))
 
+    def configure_netplan(self, data):
+        wireless_yaml = WifiHandler.WIRELESS_YAML_TEMPLATE.format(data)
+        with open('/etc/netplan/wireless.yaml', 'w+') as wirelesss_yaml_f:
+            wirelesss_yaml_f.write(wireless_yaml)
+            cmd(['netplan', 'generate'])
+            cmd(['netplan', 'apply'])
+            ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
+            return ip
+        
 
 def main(args):
     http_server = tornado.httpserver.HTTPServer(Application({}))
