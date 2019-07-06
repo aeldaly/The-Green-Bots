@@ -6,12 +6,12 @@
 
     feather.replace()
 
-    const wifiUrl = 'http://ubuntu.local/api/wifi';
-    const wifiStatusUrl = 'http://ubuntu.local/api/wifi-status';
-    const systemUrl = 'http://ubuntu.local/api/system';
-    const logsUrl = 'http://ubuntu.local/api/logs';
-    const eventsUrl = 'http://ubuntu.local/api/events';
-    const intelligenceUrl = 'http://ubuntu.local/api/intelligence';
+    const wifiUrl = 'http://thegreenbot.local/api/wifi';
+    const wifiStatusUrl = 'http://thegreenbot.local/api/wifi-status';
+    const systemUrl = 'http://thegreenbot.local/api/system';
+    const logsUrl = 'http://thegreenbot.local/api/logs';
+    const eventsUrl = 'http://thegreenbot.local/api/events';
+    const intelligenceUrl = 'http://thegreenbot.local/api/intelligence';
 
     $.getJSON(wifiStatusUrl, function (data) {
       $('#wifistatus').val(data)
