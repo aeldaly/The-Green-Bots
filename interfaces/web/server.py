@@ -207,9 +207,12 @@ network:
 
 
     def get(self):
-        wifis = Cell.all('wlan0')
-        SSIDs = [wifi.ssid for wifi in wifis]
-        self.write(json.dumps(SSIDs))
+        try:
+            wifis = Cell.all('wlan0')
+            SSIDs = [wifi.ssid for wifi in wifis]
+            self.write(json.dumps(SSIDs))
+        except Exception as ex:
+            self.write(json.dumps(ex))
 
     def generate_wireless_yaml(self, data):
         return WifiHandler.WIRELESS_YAML_TEMPLATE % data
