@@ -7,7 +7,7 @@ sudo apt -y upgrade
 
 sudo apt -y install nginx python3-pip wireless-tools
 
-sudo pip3 install tornado supervisor wifi ifparser
+sudo pip3 install tornado supervisor wifi
 
 sudo bash -c "cat > /etc/nginx/nginx.conf" << EOL
 user www-data;
@@ -24,7 +24,7 @@ events {
 }
 
 http {
-    root    /var/www/html;
+    root    /opt/thegreenbot/interfaces/web/;
     index   index.html;
 
     upstream frontends {
@@ -69,7 +69,7 @@ http {
         client_max_body_size 50M;
 
         location ^~ /assets/ {
-            root /var/www/html;
+            root /opt/thegreenbot/interfaces/web/;
             if (\$query_string) {
                 expires max;
             }
@@ -81,7 +81,7 @@ http {
             rewrite (.*) /assets/robots.txt;
         }
 
-        location /server {
+        location /api {
             proxy_pass_header Server;
             proxy_set_header Host \$http_host;
             proxy_redirect off;
@@ -94,13 +94,13 @@ http {
 EOL
 
 sudo mkdir -p /var/log/supervisor
-sudo mkdir -p /var/www/config
-sudo mkdir -p /var/www/logs
+sudo mkdir -p /opt/thegreenbot/config
+sudo mkdir -p /opt/thegreenbot/logs
 
-echo "{}" | sudo tee -a /var/www/config/config.json
-sudo touch /var/www/logs/events.log
-sudo chown -R www-data /var/www/config
-sudo chown -R www-data /var/www/logs
+echo "{}" | sudo tee -a /opt/thegreenbot/config/config.json
+sudo touch /opt/thegreenbot/logs/events.log
+sudo chown -R www-data /opt/thegreenbot/config
+sudo chown -R www-data /opt/thegreenbot/logs
 sudo usermod -a -G adm www-data
 
 sudo bash -c "cat > /etc/supervisord.conf" << EOL
@@ -113,14 +113,14 @@ pidfile=/var/run/supervisord.pid
 nodaemon=false
 
 [program:tornado-8000]
-command = python3 /var/www/server.py --port=8000
+command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8000
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
 stdout_logfile = /var/log/supervisor/tornado-stdout.log 
 autostart = true
 autorestart = true
 
 [program:tornado-8001]
-command = python3 /var/www/server.py --port=8001
+command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8001
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
 stdout_logfile = /var/log/supervisor/tornado-stdout.log 
 autostart = true

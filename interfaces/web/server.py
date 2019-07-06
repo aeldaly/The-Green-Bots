@@ -22,13 +22,13 @@ class Application(tornado.web.Application):
     def __init__(self, model):
         self.model = model
         handlers = [
-            (r"/server/system", SystemHandler),
-            (r"/server/wifi-status", WifiStatusHandler),
-            (r"/server/wifi", WifiHandler),
-            (r"/server/logs", LogHandler),
-            (r"/server/events", EventHandler),
-            (r"/server/intelligence", IntelligenceHandler),
-            (r"/server/update", UpdateHandler),
+            (r"/api/system", SystemHandler),
+            (r"/api/wifi-status", WifiStatusHandler),
+            (r"/api/wifi", WifiHandler),
+            (r"/api/logs", LogHandler),
+            (r"/api/events", EventHandler),
+            (r"/api/intelligence", IntelligenceHandler),
+            (r"/api/update", UpdateHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -225,13 +225,13 @@ network:
         
 
 def main(args):
-    http_server = tornado.httpserver.HTTPServer(Application({}))
-    http_server.listen(args.port)
+    http_api = tornado.httpapi.HTTPapi(Application({}))
+    http_api.listen(args.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Web Interface Server')
+    parser = argparse.ArgumentParser(description='Web Interface api')
 
     parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
     args = parser.parse_args()
