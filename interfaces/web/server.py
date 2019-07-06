@@ -14,8 +14,8 @@ import tornado.web
 from tornado.options import define, options
 
 
-CONFIG_FILE = '/var/www/config/config.json'
-EVENTS_FILE = '/var/www/logs/events.log'
+CONFIG_FILE = '/opt/thegreenbot/config/config.json'
+EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
 
 
 class Application(tornado.web.Application):
