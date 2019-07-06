@@ -129,3 +129,8 @@ EOL
 
 sudo supervisord -c /etc/supervisord.conf
 sudo service nginx restart
+
+snap refresh core --edge
+sudo snap refresh core --edge
+sudo snap install avahi-client
+sudo snap install avahi
