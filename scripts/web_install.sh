@@ -134,3 +134,5 @@ snap refresh core --edge
 sudo snap refresh core --edge
 sudo snap install avahi-client
 sudo snap install avahi
+
+sudo ifconfig wlan0 up
