@@ -1,27 +1,37 @@
 import argparse
 import json
-import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web, os.path
-from tornado.options import define, options
-from wifi import Cell, Scheme
+import os.path
+import subprocess
 from datetime import datetime
 
+import netifaces
+from wifi import Cell, Scheme
 
-define("port", default=8000, help="run on the given port", type=int)
-CONFIG_FILE = '../../config/config.json'
-EVENTS_FILE = '../../logs/events.log'
+import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+from tornado.options import define, options
+
+
+CONFIG_FILE = '/opt/thegreenbot/config/config.json'
+EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
+
 
 class Application(tornado.web.Application):
     def __init__(self, model):
         self.model = model
         handlers = [
-            (r"/system", SystemHandler),
-            (r"/wifi-status", WifiStatusHandler),
-            (r"/wifi", WifiHandler),
-            (r"/logs", LogHandler),
-            (r"/events", EventHandler),
-            (r"/intelligence", IntelligenceHandler),
+            (r"/api/system", SystemHandler),
+            (r"/api/wifi-status", WifiStatusHandler),
+            (r"/api/wifi", WifiHandler),
+            (r"/api/logs", LogHandler),
+            (r"/api/events", EventHandler),
+            (r"/api/intelligence", IntelligenceHandler),
+            (r"/api/update", UpdateHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
+
 
 class BaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -29,9 +39,12 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
+
 def add_event(new_line):
     with open(EVENTS_FILE, 'a+') as events_file:
-        events_file.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")+ ' - ' + str(new_line) + '\n')
+        events_file.write(datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
+
 
 def update_config_file(new_dict):
     '''
@@ -52,7 +65,7 @@ def update_config_file(new_dict):
     add_event('Updated Config File...')
     with open(CONFIG_FILE, 'r+') as config_file:
         data = json.load(config_file)
-        for k,v in new_dict.items():
+        for k, v in new_dict.items():
             data[k] = v
         config_file.seek(0)
         json.dump(data, config_file, indent=4)
@@ -66,50 +79,58 @@ def get_config_file():
     return config
 
 
-def tail(f, lines=20):
-    total_lines_wanted = lines
+def cmd(command):
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log, _err = proc.communicate()
+    try:
+        log = log.decode("utf-8")
+    except Exception as e:
+        return e
+    else:
+        return log
 
-    BLOCK_SIZE = 1024
-    f.seek(0, 2)
-    block_end_byte = f.tell()
-    lines_to_go = total_lines_wanted
-    block_number = -1
-    blocks = [] # blocks of size BLOCK_SIZE, in reverse order starting
-                # from the end of the file
-    while lines_to_go > 0 and block_end_byte > 0:
-        if (block_end_byte - BLOCK_SIZE > 0):
-            # read the last block we haven't yet read
-            f.seek(block_number*BLOCK_SIZE, 2)
-            blocks.append(f.read(BLOCK_SIZE))
-        else:
-            # file too small, start from begining
-            f.seek(0,0)
-            # only read what was not read
-            blocks.append(f.read(block_end_byte))
-        lines_found = blocks[-1].count('\n')
-        lines_to_go -= lines_found
-        block_end_byte -= BLOCK_SIZE
-        block_number -= 1
-    all_read_text = ''.join(reversed(blocks))
-    return '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
+
+def tail(filename, lines=20):
+    return cmd(['tail', '-%d' % lines, filename])
+
+
+def restart_supervisord():
+    add_event('Restarting supervisord now ...')
+    cmd(['sudo', 'killall', 'supervisord'])
+    cmd(['sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
+
+
+class UpdateHandler(BaseHandler):
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        tmp_destination = '/tmp/thegreenbots'
+        final_destination = '/opt/thegreenbots'
+        add_event('Updating The Green Bot local repository...')
+        result = cmd(['git', '-b', data.get('gitbranch', 'master'), '--single-branch', '--depth', '1', 'clone', data.get('gitrepo'), tmp_destination])
+        result += 'Storing new cloned repo on %s\n' % tmp_destination
+        result += 'Replacing old repo at %s with new cloned repo from %s\n' % (final_destination, tmp_destination)
+        result += 'Restarting supervisord...\n'
+        result += 'You need to refresh this page!\n'
+        cmd(['mv', tmp_destination, final_destination])
+        add_event('UPDATING!\n\t' + result)
+        self.write(json.dumps(result))
+        restart_supervisord()
 
 
 class LogHandler(BaseHandler):
     def get(self):
-        # syslog_f = open('/var/log/syslog', 'r') # linux
-        syslog_f = open('/var/log/system.log', 'r') # mac TEST
-        self.write(json.dumps(tail(syslog_f, lines=100)))
+        self.write(json.dumps(tail('/var/log/syslog', lines=100)))
+
 
 class EventHandler(BaseHandler):
     def get(self):
-        event_f = open(EVENTS_FILE, 'r')
-        self.write(json.dumps(tail(event_f, lines=20)))
+        self.write(json.dumps(tail(EVENTS_FILE)))
 
 
 class IntelligenceHandler(BaseHandler):
     def get(self):
         config = get_config_file()
-        self.write(json.dumps(config['intelligence']))
+        self.write(json.dumps(config.get('intelligence')))
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -141,37 +162,36 @@ class SystemHandler(BaseHandler):
 
     def _shutdown(self):
         add_event('Shutting Down')
-        print('Shutting down...')
+        cmd(['shutdown', '-h', 'now'])
 
     def _reboot(self):
         add_event('Rebooting')
-        print('Rebooting...')
+        cmd(['reboot'])
 
     def _reset_factory(self):
         add_event('Restarting to Factory')
         print('Reset to Factory...')
 
+
 class WifiStatusHandler(BaseHandler):
     def get(self):
-        access_point_mode = True
-        connected = True
-        if not access_point_mode and connected:
-            status = '''
-<p>
-Status: <span data-feather="cloud" style="color:green;">Connected</span><br><br>
-You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>
-</p>
-'''
-        elif access_point_mode:
-            status = '''
-<p>
-Status: <span data-feather="cloud-off" style="color:orange;">Access Point Mode</span><br><br>
-You can access your Green Bot web interface by clicking on:<br> <a href="http://thegreenbot" style="color:green;">http://thegreenbot</a>
-</p>
-'''
-        self.write(status)
+        wlan0 = cmd(['iwconfig', 'wlan0'])
+        self.write(json.dumps(wlan0))
+
 
 class WifiHandler(BaseHandler):
+    WIRELESS_YAML_TEMPLATE = '''
+network:
+  version: 2
+  renderer: networkd
+  wifis:
+    wlan0:
+      dhcp4: yes
+      dhcp6: yes
+      access-points:
+        "%(ssid)s":
+          password: "%(password)s"
+'''
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -182,32 +202,40 @@ class WifiHandler(BaseHandler):
                 'password': data['password'],
             }
         })
-        print(data)
-        # scheme = Scheme.find('wlan0', ssid_name)
-        # scheme.save()
-        # scheme.activate()
-        self.write(json.dumps({
-        }))
-    
-    def get(self):
-        # wifis = Cell.all('wlan0')
-        # print(wifis)
-        wifis = [
-            'BELL884-ng5',
-            'home'
-        ]
-        self.write(json.dumps(wifis))
+        new_ip = self.configure_netplan(data)
+        self.write(json.dumps(new_ip))
 
+
+    def get(self):
+        try:
+            wifis = Cell.all('wlan0')
+            SSIDs = [wifi.ssid for wifi in wifis]
+            self.write(json.dumps(SSIDs))
+        except Exception as ex:
+            self.write(json.dumps(['wlan0 Network Interface Is Down.',]))
+
+    def generate_wireless_yaml(self, data):
+        return WifiHandler.WIRELESS_YAML_TEMPLATE % data
+
+    def configure_netplan(self, data):
+        wireless_yaml = self.generate_wireless_yaml(data)
+        with open('/etc/netplan/wireless.yaml', 'w+') as wirelesss_yaml_f:
+            wirelesss_yaml_f.write(wireless_yaml)
+            cmd(['sudo', 'netplan', 'generate'], shell=True)
+            cmd(['sudo', 'netplan', 'apply'], shell=True)
+            ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
+            return ip
+        
 
 def main(args):
-    http_server = tornado.httpserver.HTTPServer(Application({}))
-    http_server.listen(options.port)
+    http_api = tornado.httpserver.HTTPServer(Application({}))
+    http_api.listen(args.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Web Interface Server')
+    parser = argparse.ArgumentParser(description='Web Interface api')
+
+    parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
     args = parser.parse_args()
     main(args)
-

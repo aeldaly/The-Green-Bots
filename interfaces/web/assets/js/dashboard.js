@@ -6,16 +6,15 @@
 
     feather.replace()
 
-    const wifiUrl = 'http://localhost:8000/wifi';
-    const wifiStatusUrl = 'http://localhost:8000/wifi-status';
-    const systemUrl = 'http://localhost:8000/system';
-    const logsUrl = 'http://localhost:8000/logs';
-    const eventsUrl = 'http://localhost:8000/events';
-    const intelligenceUrl = 'http://localhost:8000/intelligence';
+    const wifiUrl = 'http://thegreenbot.local/api/wifi';
+    const wifiStatusUrl = 'http://thegreenbot.local/api/wifi-status';
+    const systemUrl = 'http://thegreenbot.local/api/system';
+    const logsUrl = 'http://thegreenbot.local/api/logs';
+    const eventsUrl = 'http://thegreenbot.local/api/events';
+    const intelligenceUrl = 'http://thegreenbot.local/api/intelligence';
 
-    $.get(wifiStatusUrl, function (data) {
-      var wifiStatusDiv = document.getElementById('wifistatus');
-      wifiStatusDiv.innerHTML += data;
+    $.getJSON(wifiStatusUrl, function (data) {
+      $('#wifistatus').val(data)
     });
   
     // Populate Logs
@@ -154,6 +153,23 @@
     });
   });
 
+  $("#updateForm").submit(function(e) {
+    e.preventDefault();
+  });
+
+  $('#updateButton').click( function() {
+    console.log('connectButton is clicked...')
+    $.ajax({
+        url: wifiUrl,
+        type: 'post',
+        dataType: 'json',
+        data: getFormDataInJson($('form#updateForm').serializeArray()),
+        success: function(data) {
+          console.log('Getting response back from git...')
+          $('#gitresult').val(data);
+        }
+    });
+  });
 
   });
 })($);
