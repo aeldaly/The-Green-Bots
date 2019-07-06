@@ -212,7 +212,7 @@ network:
             SSIDs = [wifi.ssid for wifi in wifis]
             self.write(json.dumps(SSIDs))
         except Exception as ex:
-            self.write(json.dumps(ex))
+            self.write(json.dumps(str(ex)))
 
     def generate_wireless_yaml(self, data):
         return WifiHandler.WIRELESS_YAML_TEMPLATE % data
