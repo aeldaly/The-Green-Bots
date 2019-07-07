@@ -99,7 +99,7 @@ def restart_supervisord():
 
 
 class UpdateHandler(BaseHandler):
-    @web.asynchronous
+    
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         tmp_destination = '/tmp/thegreenbots'
@@ -117,24 +117,24 @@ class UpdateHandler(BaseHandler):
 
 
 class LogHandler(BaseHandler):
-    @web.asynchronous
+    
     def get(self):
         self.write(json.dumps(tail('/var/log/syslog', lines=100)))
 
 
 class EventHandler(BaseHandler):
-    @web.asynchronous
+    
     def get(self):
         self.write(json.dumps(tail(EVENTS_FILE)))
 
 
 class IntelligenceHandler(BaseHandler):
-    @web.asynchronous
+    
     def get(self):
         config = get_config_file()
         self.write(json.dumps(config.get('intelligence')))
 
-    @web.asynchronous
+
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         print(data)
@@ -151,11 +151,10 @@ class IntelligenceHandler(BaseHandler):
 
 
 class SystemHandler(BaseHandler):
-    @web.asynchronous
+    
     def get(self):
         self.write(json.dumps(os.uname()))
 
-    @web.asynchronous
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         if data['command'] == 'shutdown':
@@ -179,7 +178,7 @@ class SystemHandler(BaseHandler):
 
 
 class WifiStatusHandler(BaseHandler):
-    @web.asynchronous
+    
     def get(self):
         wlan0 = ('#' * 10) + 'iwconfig wlan0' + ('#' * 10)
         wlan0 += cmd(['iwconfig', 'wlan0'])
@@ -201,7 +200,7 @@ network:
         "%(ssid)s":
           password: "%(password)s"
 '''
-    @web.asynchronous
+
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         add_event('Connecting to WiFi: %s' % data['ssid'])
@@ -214,7 +213,7 @@ network:
         new_ip = self.configure_netplan(data)
         self.write(json.dumps(new_ip))
 
-    @web.asynchronous
+
     def get(self):
         try:
             wifis = Cell.all('wlan0')
