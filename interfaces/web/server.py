@@ -40,8 +40,7 @@ class BaseHandler(web.RequestHandler):
 
 def add_event(new_line):
     with open(EVENTS_FILE, 'a+') as events_file:
-        events_file.write(datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
+        events_file.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
 
 
 def update_config_file(new_dict):
@@ -76,9 +75,8 @@ def get_config_file():
         config = json.load(config_f)
     return config
 
-
-def cmd(command, shell=True):
-    proc = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def cmd(command):
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log, _err = proc.communicate()
     try:
         log = log.decode("utf-8")
@@ -87,10 +85,8 @@ def cmd(command, shell=True):
     else:
         return log
 
-
 def tail(filename, lines=20):
     return cmd(['tail', '-%d' % lines, filename])
-
 
 def restart_supervisord():
     add_event('Restarting supervisord now ...')
@@ -229,15 +225,15 @@ network:
         wireless_yaml = self.generate_wireless_yaml(data)
         with open('/etc/netplan/wireless.yaml', 'w+') as wirelesss_yaml_f:
             wirelesss_yaml_f.write(wireless_yaml)
-            cmd(['sudo', 'netplan', 'generate'], shell=True)
-            cmd(['sudo', 'netplan', 'apply'], shell=True)
+            cmd(['sudo', 'netplan', 'generate'])
+            cmd(['sudo', 'netplan', 'apply'])
             ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
             return ip
         
 
 def main(args):
     define("port", default=args.port, help="Run on the given port", type=int)
-    http_api = tornado.httpserver.HTTPServer(Application({}), idle_connection_timeout=1)
+    http_api = tornado.httpserver.HTTPServer(Application({}))
     http_api.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 

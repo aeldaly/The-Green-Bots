@@ -69,6 +69,7 @@ http {
 
     server {
         listen 80;
+        server_name thegreenbot.local;
 
         # Allow file uploads
         client_max_body_size 50M;
