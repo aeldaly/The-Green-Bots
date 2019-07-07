@@ -228,7 +228,7 @@ network:
         
 
 def main(args):
-    http_api = tornado.httpserver.HTTPServer(Application({}))
+    http_api = tornado.httpserver.HTTPServer(Application({}), idle_connection_timeout=1)
     http_api.listen(args.port)
     tornado.ioloop.IOLoop.instance().start()
 
