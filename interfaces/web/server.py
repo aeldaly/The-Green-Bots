@@ -14,6 +14,7 @@ from tornado.options import define, options
 
 CONFIG_FILE = '/opt/thegreenbot/config/config.json'
 EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
+VERSION_FILE = '/opt/thegreenbot/VERSION'
 
 
 class Application(web.Application):
@@ -56,6 +57,10 @@ def update_config_file(new_dict):
                 'autonomous-driving': True,
                 'nightvision-camera': True,
                 'ultrasonic-distance-meter': True,
+            },
+            'firmware': {
+                'version': '1.0',
+                'last_update': ''
             }
         }
     '''
@@ -75,6 +80,10 @@ def get_config_file():
         config = json.load(config_f)
     return config
 
+def get_version():
+    version_f = open(VERSION_FILE, 'r')
+    return version_f.read()
+
 def cmd(command):
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log, _err = proc.communicate()
@@ -90,12 +99,10 @@ def tail(filename, lines=20):
 
 def restart_supervisord():
     add_event('Restarting supervisord now ...')
-    cmd(['sudo', 'killall', 'supervisord'])
-    cmd(['sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
+    cmd(['sudo', 'killall', 'supervisord', '&&', 'sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
 
 
 class UpdateHandler(BaseHandler):
-    
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         tmp_destination = '/tmp/thegreenbots'
@@ -107,29 +114,31 @@ class UpdateHandler(BaseHandler):
         result += 'Restarting supervisord...\n'
         result += 'You need to refresh this page!\n'
         cmd(['mv', tmp_destination, final_destination])
+        update_config_file({
+            'firmware': {
+                'version': get_version(),
+                'last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            }
+        })
         add_event('UPDATING!\n\t' + result)
         self.write(json.dumps(result))
         restart_supervisord()
 
 
 class LogHandler(BaseHandler):
-    
     def get(self):
         self.write(json.dumps(tail('/var/log/syslog', lines=100)))
 
 
 class EventHandler(BaseHandler):
-    
     def get(self):
         self.write(json.dumps(tail(EVENTS_FILE)))
 
 
 class IntelligenceHandler(BaseHandler):
-    
     def get(self):
         config = get_config_file()
         self.write(json.dumps(config.get('intelligence')))
-
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -147,9 +156,13 @@ class IntelligenceHandler(BaseHandler):
 
 
 class SystemHandler(BaseHandler):
-    
     def get(self):
-        self.write(json.dumps(os.uname()))
+        config = get_config_file()
+        sys_lines = []
+        sys_lines.append('Firmware Version: %s\n' % config.get('firmware').get('version'))
+        sys_lines.append('Last Updated: %s\n' % config.get('firmware').get('last_updated'))
+        sys_lines += os.uname()
+        self.write(json.dumps(sys_lines))
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
