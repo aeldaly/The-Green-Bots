@@ -180,9 +180,9 @@ class SystemHandler(BaseHandler):
 class WifiStatusHandler(BaseHandler):
     
     def get(self):
-        wlan0 = ('#' * 10) + 'iwconfig wlan0' + ('#' * 10)
+        wlan0 = ('#' * 10) + ' $ iwconfig wlan0 ' + ('#' * 10) + '\n'
         wlan0 += cmd(['iwconfig', 'wlan0'])
-        wlan0 += ('#' * 10) + 'ifconfig wlan0' + ('#' * 10)
+        wlan0 += ('#' * 10) + ' $ ifconfig wlan0 ' + ('#' * 10) + '\n'
         wlan0 += cmd(['ifconfig', 'wlan0'])
         self.write(json.dumps(wlan0))
 
