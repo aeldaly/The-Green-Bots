@@ -32,8 +32,6 @@ http {
         server 127.0.0.1:8002;
         server 127.0.0.1:8003;
         server 127.0.0.1:8004;
-        server 127.0.0.1:8005;
-        server 127.0.0.1:8006;
     }
 
     access_log /var/log/nginx/access.log;
@@ -41,7 +39,6 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    # keepalive_timeout 65;
     types_hash_max_size 2048;
 	server_tokens off;
     proxy_http_version 1.1;
@@ -136,41 +133,6 @@ numprocs_start = 1
 command = python3 /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
 process_name = %(program_name)s%(process_num)d
 redirect_stderr = true
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8002]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8002
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8003]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8003
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8004]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8004
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8005]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8005
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8006]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8006
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
 stdout_logfile = /var/log/supervisor/tornado-stdout.log 
 autostart = true
