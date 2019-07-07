@@ -8,9 +8,6 @@ import sys
 # Ros libraries
 from uuid import uuid4
 
-import rospy
-
-
 import RPi.GPIO as GPIO
 import rospy
 

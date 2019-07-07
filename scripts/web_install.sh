@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 sudo apt update
 sudo apt -y upgrade
 
-sudo apt -y install nginx python3-pip wireless-tools
+sudo apt -y install nginx python3-pip wireless-tools build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python3-dev
 
 sudo pip3 install tornado supervisor wifi
 
