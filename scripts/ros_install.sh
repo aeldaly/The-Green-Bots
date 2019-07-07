@@ -8,14 +8,12 @@ sudo apt update
 
 sudo apt -y upgrade
 
-# ros-melodic-gmapping
-# melodic-rosserial-msgs 
-# melodic-compressed-image-transport
 sudo apt install -y ros-melodic-desktop-full ros-melodic-joy ros-melodic-teleop-twist-joy ros-melodic-teleop-twist-keyboard \
   ros-melodic-laser-proc ros-melodic-rgbd-launch ros-melodic-rosserial-arduino ros-melodic-rosserial-python \
   ros-melodic-rosserial-server ros-melodic-rosserial-client ros-melodic-amcl ros-melodic-map-server \
   ros-melodic-move-base ros-melodic-urdf ros-melodic-xacro \
-  ros-melodic-rqt-image-view ros-melodic-navigation ros-melodic-interactive-markers
+  ros-melodic-rqt-image-view ros-melodic-navigation ros-melodic-interactive-markers ros-melodic-compressed-image-transport \
+  ros-melodic-rosserial-msgs ros-melodic-cartographer
 
 echo "/opt/ros/melodic/setup.bash" >> ~/.bashrc
 echo "export TURTLEBOT3_MODEL=waffle_pi" >> ~/.bashrc

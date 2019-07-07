@@ -28,13 +28,10 @@ http {
     index   index.html;
 
     upstream frontends {
-        server 127.0.0.1:8000;
         server 127.0.0.1:8001;
         server 127.0.0.1:8002;
         server 127.0.0.1:8003;
         server 127.0.0.1:8004;
-        server 127.0.0.1:8005;
-        server 127.0.0.1:8006;
     }
 
     access_log /var/log/nginx/access.log;
@@ -42,9 +39,9 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    keepalive_timeout 65;
     types_hash_max_size 2048;
-	  server_tokens off;
+    server_tokens off;
+    proxy_http_version 1.1;
     proxy_read_timeout 200;
     
     sendfile on;
@@ -118,50 +115,24 @@ loglevel=info
 pidfile=/var/run/supervisord.pid
 nodaemon=false
 
-[program:tornado-8000]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8000
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
+[supervisorctl]
+serverurl = unix://supervisord.sock
 
-[program:tornado-8001]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8001
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
+[unix_http_server]
+file = supervisord.sock
 
-[program:tornado-8002]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8002
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
-[program:tornado-8003]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8003
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
+[group:tornado_cluster]
+programs = tornado_web_cluster
 
-[program:tornado-8004]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8004
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8005]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8005
-stderr_logfile = /var/log/supervisor/tornado-stderr.log
-stdout_logfile = /var/log/supervisor/tornado-stdout.log 
-autostart = true
-autorestart = true
-
-[program:tornado-8006]
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=8006
+[program:tornado_web_cluster]
+numprocs = 4
+numprocs_start = 1
+command = python3 /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
+process_name = %(program_name)s%(process_num)d
+redirect_stderr = true
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
 stdout_logfile = /var/log/supervisor/tornado-stdout.log 
 autostart = true
