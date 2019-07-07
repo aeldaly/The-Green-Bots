@@ -40,7 +40,7 @@ http {
     default_type application/octet-stream;
 
     types_hash_max_size 2048;
-	server_tokens off;
+    server_tokens off;
     proxy_http_version 1.1;
     proxy_read_timeout 200;
     
