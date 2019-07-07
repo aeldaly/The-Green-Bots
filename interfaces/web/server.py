@@ -161,7 +161,7 @@ class SystemHandler(BaseHandler):
         sys_lines = []
         sys_lines.append('Firmware Version: %s\n' % config.get('firmware').get('version'))
         sys_lines.append('Last Updated: %s\n' % config.get('firmware').get('last_updated'))
-        sys_lines += os.uname()
+        sys_lines += [os.uname(),]
         self.write(json.dumps(sys_lines))
 
     def post(self):
