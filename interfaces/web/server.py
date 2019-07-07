@@ -9,10 +9,8 @@ from wifi import Cell, Scheme
 
 import tornado.httpserver
 import tornado.ioloop
-import tornado.options
 import tornado.web
 from tornado.options import define, options
-
 
 CONFIG_FILE = '/opt/thegreenbot/config/config.json'
 EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
@@ -101,6 +99,7 @@ def restart_supervisord():
 
 
 class UpdateHandler(BaseHandler):
+    @tornado.web.asynchronous
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         tmp_destination = '/tmp/thegreenbots'
@@ -118,20 +117,24 @@ class UpdateHandler(BaseHandler):
 
 
 class LogHandler(BaseHandler):
+    @tornado.web.asynchronous
     def get(self):
         self.write(json.dumps(tail('/var/log/syslog', lines=100)))
 
 
 class EventHandler(BaseHandler):
+    @tornado.web.asynchronous
     def get(self):
         self.write(json.dumps(tail(EVENTS_FILE)))
 
 
 class IntelligenceHandler(BaseHandler):
+    @tornado.web.asynchronous
     def get(self):
         config = get_config_file()
         self.write(json.dumps(config.get('intelligence')))
 
+    @tornado.web.asynchronous
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         print(data)
@@ -148,9 +151,11 @@ class IntelligenceHandler(BaseHandler):
 
 
 class SystemHandler(BaseHandler):
+    @tornado.web.asynchronous
     def get(self):
         self.write(json.dumps(os.uname()))
 
+    @tornado.web.asynchronous
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         if data['command'] == 'shutdown':
@@ -174,8 +179,12 @@ class SystemHandler(BaseHandler):
 
 
 class WifiStatusHandler(BaseHandler):
+    @tornado.web.asynchronous
     def get(self):
-        wlan0 = cmd(['iwconfig', 'wlan0'])
+        wlan0 = ('#' * 10) + 'iwconfig wlan0' + ('#' * 10)
+        wlan0 += cmd(['iwconfig', 'wlan0'])
+        wlan0 += ('#' * 10) + 'ifconfig wlan0' + ('#' * 10)
+        wlan0 += cmd(['ifconfig', 'wlan0'])
         self.write(json.dumps(wlan0))
 
 
@@ -192,7 +201,7 @@ network:
         "%(ssid)s":
           password: "%(password)s"
 '''
-
+    @tornado.web.asynchronous
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         add_event('Connecting to WiFi: %s' % data['ssid'])
@@ -205,7 +214,7 @@ network:
         new_ip = self.configure_netplan(data)
         self.write(json.dumps(new_ip))
 
-
+    @tornado.web.asynchronous
     def get(self):
         try:
             wifis = Cell.all('wlan0')
@@ -228,8 +237,9 @@ network:
         
 
 def main(args):
+    define("port", default=args.port, help="Run on the given port", type=int)
     http_api = tornado.httpserver.HTTPServer(Application({}), idle_connection_timeout=1)
-    http_api.listen(args.port)
+    http_api.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
