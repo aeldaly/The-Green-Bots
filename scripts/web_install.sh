@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 sudo apt update
 sudo apt -y upgrade
 
-sudo apt -y install nginx python3-pip wireless-tools build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python3-dev
+sudo apt -y install nginx python3-pip wireless-tools
 
 sudo pip3 install tornado supervisor wifi
 
@@ -130,7 +130,7 @@ programs = tornado_web_cluster
 [program:tornado_web_cluster]
 numprocs = 4
 numprocs_start = 1
-command = python3 /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
+command = python /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
 process_name = %(program_name)s%(process_num)d
 redirect_stderr = true
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
@@ -147,3 +147,36 @@ sudo snap install avahi-client
 sudo snap install avahi
 
 sudo ifconfig wlan0 up
+
+echo "OpenCV installation by learnOpenCV.com"
+
+# Create directory for installation
+sudo mkdir /opt/opencv
+sudo mkdir /opt/opencv_contrib
+sudo chown -R ubuntu:ubuntu /opt/opencv
+sudo chown -R ubuntu:ubuntu /opt/opencv_contrib
+cwd=$(pwd)
+
+sudo apt-get install build-essential cmake pkg-config
+sudo apt-get install libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libatlas-base-dev gfortran python3-dev 
+
+git clone https://github.com/Itseez/opencv.git --depth 1 --branch 3.4.0
+cd opencv
+mkdir build
+git checkout 3.4.0
+
+cd $cwd
+git clone https://github.com/Itseez/opencv_contrib.git --depth 1 --branch 3.4.0
+cd opencv_contrib
+git checkout 3.4.0
+
+cd ../opencv/build
+cmake
+
+make -j4
+sudo make install
+sudo ldconfig
+
+

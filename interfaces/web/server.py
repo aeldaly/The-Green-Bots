@@ -14,8 +14,8 @@ from tornado.options import define, options
 
 import cv2
 import base64
-import rospy
-from geometry_msgs.msg import Twist
+# import rospy
+# from geometry_msgs.msg import Twist
 
 CONFIG_FILE = '/opt/thegreenbot/config/config.json'
 EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
@@ -25,7 +25,7 @@ VERSION_FILE = '/opt/thegreenbot/VERSION'
 class Application(web.Application):
     def __init__(self, model):
         self.camera = cv2.VideoCapture(0)
-        self.control_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        # self.control_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.model = model
         handlers = [
             (r"/api/system", SystemHandler),
@@ -124,12 +124,12 @@ class CameraHandler(BaseHandler):
 class ControlHandler(BaseHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        vel_msg = Twist()
-        vel_msg.linear.x = abs(data)
-        vel_msg.linear.x = -abs(data)
-        vel_msg.angular.z = data
-        self.application.control_publisher.publish(vel_msg)
-        self.write(json.dumps(vel_msg))
+        # vel_msg = Twist()
+        # vel_msg.linear.x = abs(data)
+        # vel_msg.linear.x = -abs(data)
+        # vel_msg.angular.z = data
+        # self.application.control_publisher.publish(vel_msg)
+        self.write(json.dumps(data))
 
 
 class UpdateHandler(BaseHandler):
