@@ -3,8 +3,8 @@
     $(document).ready(function () {
         'use strict'
 
-        const cameraURL = "http://localhost:8000/api/operate/camera";
-        const controlUrl = "http://localhost:8000/api/operate/control";
+        const cameraURL = "http://thegreenbot.local/api/operate/camera";
+        const controlUrl = "http://thegreenbot.local/api/operate/control";
 
         var imageObj = new Image();
         imageObj.onload = function () {
