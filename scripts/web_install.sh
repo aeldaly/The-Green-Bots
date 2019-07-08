@@ -130,7 +130,7 @@ programs = tornado_web_cluster
 [program:tornado_web_cluster]
 numprocs = 4
 numprocs_start = 1
-command = python /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
+command = python3 /opt/thegreenbot/interfaces/web/server.py --port=80%(process_num)02d
 process_name = %(program_name)s%(process_num)d
 redirect_stderr = true
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
@@ -148,9 +148,16 @@ sudo snap install avahi
 
 sudo ifconfig wlan0 up
 
-echo "OpenCV installation by learnOpenCV.com"
+sudo mkdir raspberrypi
+sudo chown -R ubuntu:ubuntu raspberrypi
+git clone https://github.com/raspberrypi/userland.git --depth 1
+cd raspberrypi
+./buildme
 
-# Create directory for installation
+
+echo "OpenCV installation"
+
+# OpenCV Installation
 sudo mkdir /opt/opencv
 sudo mkdir /opt/opencv_contrib
 sudo chown -R ubuntu:ubuntu /opt/opencv

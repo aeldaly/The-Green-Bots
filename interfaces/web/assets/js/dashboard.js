@@ -6,12 +6,15 @@
 
     feather.replace()
 
-    const wifiUrl = 'http://thegreenbot.local/api/wifi';
-    const wifiStatusUrl = 'http://thegreenbot.local/api/wifi-status';
-    const systemUrl = 'http://thegreenbot.local/api/system';
-    const logsUrl = 'http://thegreenbot.local/api/logs';
-    const eventsUrl = 'http://thegreenbot.local/api/events';
-    const intelligenceUrl = 'http://thegreenbot.local/api/intelligence';
+    var serverURL = "http://thegreenbot.local";
+    // var serverURL = "http://localhost:8000";
+
+    const wifiUrl = serverURL + '/api/wifi';
+    const wifiStatusUrl = serverURL + '/api/wifi-status';
+    const systemUrl = serverURL + '/api/system';
+    const logsUrl = serverURL + '/api/logs';
+    const eventsUrl = serverURL + '/api/events';
+    const intelligenceUrl = serverURL + '/api/intelligence';
 
     $.getJSON(wifiStatusUrl, function (data) {
       $('#wifistatus').val(data)

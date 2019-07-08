@@ -3,8 +3,10 @@
     $(document).ready(function () {
         'use strict'
 
-        const cameraURL = "http://thegreenbot.local/api/operate/camera";
-        const controlUrl = "http://thegreenbot.local/api/operate/control";
+        var serverURL = "http://thegreenbot.local";
+        // var serverURL = "http://localhost:8000";
+        const cameraURL = serverURL + "/api/operate/camera";
+        const controlURL = serverURL + "/api/operate/control";
 
         var imageObj = new Image();
         imageObj.onload = function () {
@@ -60,7 +62,7 @@
             }
             if (controlKey != null){
                 $.ajax({
-                    url: controlUrl,
+                    url: controlURL,
                     type: 'post',
                     dataType: 'json',
                     data: JSON.stringify(controlKey),
