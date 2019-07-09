@@ -8,29 +8,35 @@
         const cameraURL = serverURL + "/api/operate/camera";
         const controlURL = serverURL + "/api/operate/control";
 
-        var imageObj = new Image();
-        imageObj.onload = function () {
-            drawOnCanvas();
-            setTimeout(timedRefresh, 100);
-        }
-        // set src AFTER assigning load
-        $.get(cameraURL + "?t=" + new Date().getTime(), function(data, status){
-            imageObj.src = "data:image/png;base64," + data;
-        });
 
         function timedRefresh() {
-            $.get(cameraURL + "?t=" + new Date().getTime(), function(data, status){
-                imageObj.src = "data:image/png;base64," + data;
-                console.log(imageObj.src);
+            $.ajax({
+                url: cameraURL + "?t=" + new Date().getTime(),
+                type: 'get',
+                cache: false,
+                success: function(data){
+                    imageObj.src = "data:image/png;base64," + data;
+                },
+                error: function(){
+                    console.log('error!');
+                    setTimeout(timedRefresh, 100);
+                }
             });
         }
-
         function drawOnCanvas() {
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(imageObj, 0, 0, canvas.width, canvas.height);
         }
+
+        var imageObj = new Image();
+        imageObj.onload = function () {
+            drawOnCanvas();
+            setTimeout(timedRefresh, 100);
+        }
+
+        timedRefresh();
 
         document.onkeydown = checkKey;
 
