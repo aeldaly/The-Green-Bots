@@ -11,7 +11,7 @@
         var imageObj = new Image();
         imageObj.onload = function () {
             drawOnCanvas();
-            setTimeout(timedRefresh, 10);
+            setTimeout(timedRefresh, 100);
         }
         // set src AFTER assigning load
         $.get(cameraURL + "?t=" + new Date().getTime(), function(data, status){
