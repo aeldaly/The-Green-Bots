@@ -14,12 +14,12 @@
             setTimeout(timedRefresh, 10);
         }
         // set src AFTER assigning load
-        $.get(cameraURL, function(data, status){
+        $.get(cameraURL + "?t=" + new Date().getTime(), function(data, status){
             imageObj.src = "data:image/png;base64," + data;
         });
 
         function timedRefresh() {
-            $.get(cameraURL, function(data, status){
+            $.get(cameraURL + "?t=" + new Date().getTime(), function(data, status){
                 imageObj.src = "data:image/png;base64," + data;
                 console.log(imageObj.src);
             });
