@@ -148,11 +148,34 @@ sudo snap install avahi
 
 sudo ifconfig wlan0 up
 
+
+# Enabling Camera
+echo "start_x=1" >> /boot/firmware/config.txt
+echo "gpu_mem=128" >> /boot/firmware/config.txt
+sudo modprobe bcm2835-v4l2
+v4l2-ctl -D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 
 sudo mkdir raspberrypi
 sudo chown -R ubuntu:ubuntu raspberrypi
 git clone https://github.com/raspberrypi/userland.git --depth 1
 cd raspberrypi
 ./buildme
+
+
 
 
 echo "OpenCV installation"
