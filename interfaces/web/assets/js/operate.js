@@ -21,6 +21,7 @@
         function timedRefresh() {
             $.get(cameraURL, function(data, status){
                 imageObj.src = "data:image/png;base64," + data;
+                console.log(imageObj.src);
             });
         }
 
