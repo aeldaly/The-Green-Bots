@@ -33,6 +33,9 @@ http {
         server 127.0.0.1:8003;
         server 127.0.0.1:8004;
     }
+    upstream operate {
+        server 127.0.0.1:8101;
+    }
 
     access_log /var/log/nginx/access.log;
 
@@ -84,6 +87,15 @@ http {
             rewrite (.*) /assets/robots.txt;
         }
 
+        location /api/operate {
+            proxy_pass_header Server;
+            proxy_set_header Host \$http_host;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Scheme \$scheme;
+            proxy_pass http://operate;
+        }
+
         location /api {
             proxy_pass_header Server;
             proxy_set_header Host \$http_host;
@@ -127,6 +139,9 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 [group:tornado_cluster]
 programs = tornado_web_cluster
 
+[group:operate_cluster]
+programs = tornado_operate_web_cluster
+
 [program:tornado_web_cluster]
 numprocs = 4
 numprocs_start = 1
@@ -135,6 +150,17 @@ process_name = %(program_name)s%(process_num)d
 redirect_stderr = true
 stderr_logfile = /var/log/supervisor/tornado-stderr.log
 stdout_logfile = /var/log/supervisor/tornado-stdout.log 
+autostart = true
+autorestart = true
+
+[program:tornado_operate_web_cluster]
+numprocs = 1
+numprocs_start = 1
+command = python3 /opt/thegreenbot/interfaces/web/operate.py --port=81%(process_num)02d
+process_name = %(program_name)s%(process_num)d
+redirect_stderr = true
+stderr_logfile = /var/log/supervisor/tornado-operaate-stderr.log
+stdout_logfile = /var/log/supervisor/tornado-operaate-stdout.log 
 autostart = true
 autorestart = true
 EOL

@@ -12,8 +12,8 @@ import tornado.ioloop
 from tornado import web
 from tornado.options import define, options
 
-import cv2
-import base64
+# import cv2
+# import base64
 # import rospy
 # from geometry_msgs.msg import Twist
 
@@ -24,7 +24,7 @@ VERSION_FILE = '/opt/thegreenbot/VERSION'
 
 class Application(web.Application):
     def __init__(self, model):
-        self.camera = cv2.VideoCapture(0)
+        # self.camera = cv2.VideoCapture(0)
         # self.control_publisher = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.model = model
         handlers = [
@@ -34,9 +34,7 @@ class Application(web.Application):
             (r"/api/logs", LogHandler),
             (r"/api/events", EventHandler),
             (r"/api/intelligence", IntelligenceHandler),
-            (r"/api/update", UpdateHandler),
-            (r"/api/operate/camera", CameraHandler),
-            (r"/api/operate/control", ControlHandler),
+            (r"/api/update", UpdateHandler)
         ]
         web.Application.__init__(self, handlers)
 
@@ -109,27 +107,6 @@ def tail(filename, lines=20):
 def restart_supervisord():
     add_event('Restarting supervisord now ...')
     cmd(['sudo', 'killall', 'supervisord', '&&', 'sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
-
-
-class CameraHandler(BaseHandler):
-    def get(self):
-        retval, frame = self.application.camera.read()
-        if retval != True:
-            raise ValueError("Can't read frame")
-        encoded_img = cv2.imencode('.png',frame)[1]
-        frame_b64 = base64.b64encode(encoded_img)
-        self.write(frame_b64)
-
-
-class ControlHandler(BaseHandler):
-    def post(self):
-        data = tornado.escape.json_decode(self.request.body)
-        # vel_msg = Twist()
-        # vel_msg.linear.x = abs(data)
-        # vel_msg.linear.x = -abs(data)
-        # vel_msg.angular.z = data
-        # self.application.control_publisher.publish(vel_msg)
-        self.write(json.dumps(data))
 
 
 class UpdateHandler(BaseHandler):
