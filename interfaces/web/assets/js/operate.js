@@ -9,6 +9,9 @@
         const controlURL = serverURL + "/api/operate/control";
 
 
+        const refreshInterval = 1;
+
+        
         function timedRefresh() {
             $.ajax({
                 url: cameraURL + "?t=" + new Date().getTime(),
@@ -19,7 +22,7 @@
                 },
                 error: function(){
                     console.log('error!');
-                    setTimeout(timedRefresh, 100);
+                    setTimeout(timedRefresh, refreshInterval);
                 }
             });
         }
@@ -33,7 +36,7 @@
         var imageObj = new Image();
         imageObj.onload = function () {
             drawOnCanvas();
-            setTimeout(timedRefresh, 100);
+            setTimeout(timedRefresh, refreshInterval);
         }
 
         timedRefresh();
