@@ -3,12 +3,9 @@
 sudo apt update
 sudo apt -y upgrade
 
-sudo apt -y install nginx-extras python3-pip wireless-tools build-essential cmake \
-    pkg-config libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev \ 
-    libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \ 
-    libatlas-base-dev gfortran python3-dev 
+sudo apt -y install nginx python3-pip wireless-tools pkg-config
 
-sudo apt --auto-remove
+sudo apt -y auto-remove
 
 sudo pip3 install tornado supervisor wifi
 
@@ -24,7 +21,7 @@ sudo snap install avahi
 # update repo, copy any new aliases and source
 cd $GREENBOTS_ROOT/src
 git pull
-cp configs/bash/bash_aliases /etc/profile.d/bash_aliases.sh
+sudo cp configs/bash/bash_aliases /etc/profile.d/bash_aliases.sh
 source /etc/profile
 
 $GREENBOTS_ROOT/src/scripts/folders_and_links.sh

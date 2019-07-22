@@ -7,8 +7,8 @@ sudo mkdir -p $SUPERVISOR_ROOT/logs
 
 sudo touch $GREENBOTS_ROOT/logs/events.log
 
-sudo ln -s $GREENBOTS_ROOT/src/api $API_SERVER_ROOT
-sudo ln -s $GREENBOTS_ROOT/src/web $WEB_INTERFACE_ROOT
+sudo ln -s $GREENBOTS_ROOT/src/api $GREENBOTS_ROOT
+sudo ln -s $GREENBOTS_ROOT/src/web $GREENBOTS_ROOT
 
 sudo cp $GREENBOTS_ROOT/src/configs/bot-config.json $API_SERVER_ROOT/bot-config.json
 
@@ -20,4 +20,4 @@ sudo ln -s $GREENBOTS_ROOT/src/configs/supervisord/supervisord.conf $SUPERVISOR_
 sudo ln -s $GREENBOTS_ROOT/src/configs/init_scripts/greenbots-api.sh /etc/init.d/
 
 sudo rm /etc/nginx/nginx.conf
-sudo ln -s $GREENBOTS_ROOT/src/configs/nginx/nginx.conf /etc/nginx/
+sudo -E bash -c "ruby $GREENBOTS_ROOT/src/configs/nginx/nginx.rb"
