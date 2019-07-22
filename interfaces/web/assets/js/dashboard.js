@@ -16,6 +16,7 @@ $(document).ready(function() {
 
     var pingInternal = 100;
 
+    $('nav').hide();
     $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
     $(window).on('load', function(){
@@ -28,14 +29,17 @@ $(document).ready(function() {
           type: 'get',
           cache: false,
           success: function(data){
-            $( "#loadingScreen" ).fadeOut(500, function() {
+            $("#loadingScreen").fadeOut(500, function() {
               // fadeOut complete. Remove the loading div
-              $( "#loadingScreen" ).remove(); //makes page more lightweight 
+              $("#loadingScreen" ).hide(); //makes page more lightweight 
+              $('nav').show();
             }); 
+            setTimeout(pingServer, pingInternal);
           },
           error: function(){
               console.log('Error connecting to server!');
               $('#loadingScreen').show();
+              $('nav').hide();
               setTimeout(pingServer, pingInternal);
           }
       });

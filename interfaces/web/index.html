@@ -37,247 +37,244 @@
   <!-- Custom styles for this template -->
   <link href="assets/css/dashboard.css" rel="stylesheet">
 </head>
-<div id="loading">
-    
-</div>
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" style="color:green;">The Green Bot</a>
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="index.html"><span data-feather="home"></span> Dashboard</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="operate.html"><span data-feather="airplay"></span> Operate</a>
-        </li>
-      </ul>
-    </div>
-    <div class="dropdown">
-      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-        <span data-feather="cpu"></span>
-      </button>
-      <div class="dropdown-menu" style="left: auto; right: 0;">
-        <a class="dropdown-item" id="systemInfo" data-toggle="modal" data-target="#sysInfoModal"><span data-feather="info"></span> System Info</a>
-        <a class="dropdown-item" id="shutdownButton"><span data-feather="power"></span> Shutdown</a>
-        <a class="dropdown-item" id="rebootButton"><span data-feather="repeat"></span> Reboot</a>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" style="color:green;">The Green Bot</a>
+      <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="index.html"><span data-feather="home"></span> Dashboard</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="operate.html"><span data-feather="airplay"></span> Operate</a>
+          </li>
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+          <span data-feather="cpu"></span>
+        </button>
+        <div class="dropdown-menu" style="left: auto; right: 0;">
+          <a class="dropdown-item" id="systemInfo" data-toggle="modal" data-target="#sysInfoModal"><span data-feather="info"></span> System Info</a>
+          <a class="dropdown-item" id="shutdownButton"><span data-feather="power"></span> Shutdown</a>
+          <a class="dropdown-item" id="rebootButton"><span data-feather="repeat"></span> Reboot</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="modal" id="sysInfoModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+    
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Green Bot - System Info</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <p id="sysinfo"></p>
+            <ul id="sysinfolist"></ul>
+          </div>
+    
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+    
+        </div>
       </div>
     </div>
-  </nav>
-
-  <div class="modal" id="sysInfoModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-  
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Green Bot - System Info</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-  
-        <!-- Modal body -->
-        <div class="modal-body">
-          <p id="sysinfo"></p>
-          <ul id="sysinfolist"></ul>
-        </div>
-  
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-  
-      </div>
-    </div>
-  </div>
 
 
 
-  <div class="container-fluid">
-    <div class="row">
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-        <div class="sidebar-sticky">
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="#wifi">
-                <span data-feather="wifi"></span>
-                Wifi
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#system">
-                <span data-feather="settings"></span>
-                System
-              </a>
-            </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link" href="#intelligence">
-                <span data-feather="cpu"></span>
-                Intelligence
-              </a>
-            </li> -->
-            <li class="nav-item">
-              <a class="nav-link" href="#logs">
-                <span data-feather="activity"></span>
-                Logs
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#update">
-                <span data-feather="cloud-rain"></span>
-                Update
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2" id="dashboard">Dashboard</h1>
-          <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="#wifi">
+                  <span data-feather="wifi"></span>
+                  Wifi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#system">
+                  <span data-feather="settings"></span>
+                  System
+                </a>
+              </li>
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="#intelligence">
+                  <span data-feather="cpu"></span>
+                  Intelligence
+                </a>
+              </li> -->
+              <li class="nav-item">
+                <a class="nav-link" href="#logs">
+                  <span data-feather="activity"></span>
+                  Logs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#update">
+                  <span data-feather="cloud-rain"></span>
+                  Update
+                </a>
+              </li>
+            </ul>
           </div>
-        </div>
+        </nav>
 
-        <h2 id="wifi">Wifi</h2>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-4">
-              <h3>Connect</h3>
-              <form id="wifiForm">
-                <div class="form-group">
-                  <label for="ssid">Wifi SSID:</label>
-                  <select class="form-control" id="ssid" name="ssid"></select>
-                </div>
-                <div class="form-group">
-                  <label for="password">Password:</label>
-                  <input class="form-control" type="password" id="password" name="password"></input>
-                </div>
-                <button type="submit" class="btn btn-success" id="connectButton">Connect</button>
-              </form>
-            </div>
-            <div class="col-md-6">
-              <h3>Wireless Card Status</h3>
-              <textarea rows="10" cols="80" id="wifistatus" readonly></textarea>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2" id="dashboard">Dashboard</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
             </div>
           </div>
-        </div>
 
-        <!-- <hr>
-        <h2 id="system">System</h2>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6">
-              <h4>System Info</h4>
-              <p id="sysinfo"></p>
-              <ul id="sysinfolist"></ul>
+          <h2 id="wifi">Wifi</h2>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-4">
+                <h3>Connect</h3>
+                <form id="wifiForm">
+                  <div class="form-group">
+                    <label for="ssid">Wifi SSID:</label>
+                    <select class="form-control" id="ssid" name="ssid"></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input class="form-control" type="password" id="password" name="password"></input>
+                  </div>
+                  <button type="submit" class="btn btn-success" id="connectButton">Connect</button>
+                </form>
+              </div>
+              <div class="col-md-6">
+                <h3>Wireless Card Status</h3>
+                <textarea rows="10" cols="80" id="wifistatus" readonly></textarea>
+              </div>
             </div>
           </div>
-        </div> -->
 
-        <!-- <hr>
-        <h2 id="intelligence">Intelligence</h2>
-        <br><br>
-        <div class="container-fluid">
-          <form id="intelligenceForm">
+          <!-- <hr>
+          <h2 id="system">System</h2>
+          <div class="container-fluid">
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input class="form-control" id="intelligence-voice-command" name="voice-command" type="checkbox"
-                        data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success"
-                        data-offstyle="danger">
-                      Voice Command
-                    </label>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input class="form-control" id="intelligence-autonomous-driving" name="autonomous-driving"
-                        type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled"
-                        data-onstyle="success" data-offstyle="danger">
-                      Autonomous Driving
-                    </label>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input class="form-control" id="intelligence-nightvision-camera" name="nightvision-camera"
-                        type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled"
-                        data-onstyle="success" data-offstyle="danger">
-                      Night Vision Camera
-                    </label>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="checkbox">
-                    <label>
-                      <input class="form-control" id="intelligence-ultrasonic-distance-meter"
-                        name="ultrasonic-distance-meter" type="checkbox" data-toggle="toggle" data-on="Enabled"
-                        data-off="Disabled" data-onstyle="success" data-offstyle="danger">
-                      Ultra Sonic Distance Meter
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
+                <h4>System Info</h4>
+                <p id="sysinfo"></p>
+                <ul id="sysinfolist"></ul>
               </div>
             </div>
-            <div class="text-center">
-              <button type="submit" class="btn btn-success" id="intelligenceSaveButton">Save</button>
-            </div>
-          </form>
-        </div> -->
+          </div> -->
 
-        <hr>
-
-        <h2 id="logs">Logs</h2>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Events</h3>
-              <textarea rows="20" cols="150" id="eventsview" readonly></textarea>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <h3>Syslog</h3>
-              <textarea rows="20" cols="150" id="logsview" readonly></textarea>
-            </div>
-          </div>
-        </div>
-        <hr>
-
-        <h2 id="update">Update</h2>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5">
-              <h4>Update Repository Settings</h4>
-              <form id="updateForm">
-                <div class="form-group">
-                  <label for="gitrepo">Git Repo:</label>
-                  <input class="form-control" type="text" id="gitrepo" name="gitrepo"
-                    value="https://github.com/aeldaly/The-Green-Bots.git"></input>
+          <!-- <hr>
+          <h2 id="intelligence">Intelligence</h2>
+          <br><br>
+          <div class="container-fluid">
+            <form id="intelligenceForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <input class="form-control" id="intelligence-voice-command" name="voice-command" type="checkbox"
+                          data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success"
+                          data-offstyle="danger">
+                        Voice Command
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <input class="form-control" id="intelligence-autonomous-driving" name="autonomous-driving"
+                          type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled"
+                          data-onstyle="success" data-offstyle="danger">
+                        Autonomous Driving
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <input class="form-control" id="intelligence-nightvision-camera" name="nightvision-camera"
+                          type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled"
+                          data-onstyle="success" data-offstyle="danger">
+                        Night Vision Camera
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <input class="form-control" id="intelligence-ultrasonic-distance-meter"
+                          name="ultrasonic-distance-meter" type="checkbox" data-toggle="toggle" data-on="Enabled"
+                          data-off="Disabled" data-onstyle="success" data-offstyle="danger">
+                        Ultra Sonic Distance Meter
+                      </label>
+                    </div>
+                  </div>
                 </div>
-                <p>Note: You can specify a Branch name or leave it to default as Master.</p>
-                <div class="form-group">
-                  <label for="gitbranch">Branch:</label>
-                  <input class="form-control" type="text" id="gitbranch" name="gitbranch" value="master"></input>
+                <div class="col-md-6">
                 </div>
-                <button type="submit" class="btn btn-success" id="updateButton">Update</button>
-              </form>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-success" id="intelligenceSaveButton">Save</button>
+              </div>
+            </form>
+          </div> -->
+
+          <hr>
+
+          <h2 id="logs">Logs</h2>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-12">
+                <h3>Events</h3>
+                <textarea rows="20" cols="150" id="eventsview" readonly></textarea>
+              </div>
             </div>
-            <div class="col-md-5">
-              <h4>Update Status</h4>
-              <textarea rows="10" cols="80" id="gitresult" readonly></textarea>
+            <div class="row">
+              <div class="col-md-12">
+                <h3>Syslog</h3>
+                <textarea rows="20" cols="150" id="logsview" readonly></textarea>
+              </div>
             </div>
           </div>
-          <br><br><br>
+          <hr>
 
-      </main>
-    </div>
+          <h2 id="update">Update</h2>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-5">
+                <h4>Update Repository Settings</h4>
+                <form id="updateForm">
+                  <div class="form-group">
+                    <label for="gitrepo">Git Repo:</label>
+                    <input class="form-control" type="text" id="gitrepo" name="gitrepo"
+                      value="https://github.com/aeldaly/The-Green-Bots.git"></input>
+                  </div>
+                  <p>Note: You can specify a Branch name or leave it to default as Master.</p>
+                  <div class="form-group">
+                    <label for="gitbranch">Branch:</label>
+                    <input class="form-control" type="text" id="gitbranch" name="gitbranch" value="master"></input>
+                  </div>
+                  <button type="submit" class="btn btn-success" id="updateButton">Update</button>
+                </form>
+              </div>
+              <div class="col-md-5">
+                <h4>Update Status</h4>
+                <textarea rows="10" cols="80" id="gitresult" readonly></textarea>
+              </div>
+            </div>
+            <br><br><br>
+
+        </main>
+      </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

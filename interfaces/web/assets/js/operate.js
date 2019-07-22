@@ -7,9 +7,7 @@ $(document).ready(function() {
     const cameraURL = serverURL + "/api/operate/camera";
     const controlURL = serverURL + "/api/operate/control";
 
-
     const refreshInterval = 1;
-
 
     function timedRefresh() {
         $.ajax({
