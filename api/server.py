@@ -126,8 +126,12 @@ class UpdateHandler(BaseHandler):
         tmp_destination = '/tmp/thegreenbots'
         final_destination = '/opt/thegreenbots'
         add_event('Updating The Green Bot local repository...')
-        result = cmd(['git', 'clone', '-b', data.get('gitbranch', 'master'),
-                      '--single-branch', '--depth', '1', data.get('gitrepo'), tmp_destination])
+        result = cmd([
+            'git', 'clone', '-b', data.get('gitbranch', 'master'), 
+            '--single-branch', '--depth', '1', 
+            data.get('gitrepo'), 
+            tmp_destination
+        ])
         result += 'Storing new cloned repo on %s\n' % tmp_destination
         result += 'Replacing old repo at %s with new cloned repo from %s\n' % (
             final_destination, tmp_destination)

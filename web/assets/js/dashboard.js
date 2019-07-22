@@ -1,51 +1,17 @@
 $(document).ready(function() {
     'use strict'
-
-    feather.replace()
+    console.log('Dashboard.js loaded...')
 
     var serverURL = "http://thegreenbot.local";
     // var serverURL = "http://localhost:8000";
 
     const wifiUrl = serverURL + '/api/wifi';
     const wifiStatusUrl = serverURL + '/api/wifi-status';
-    const systemUrl = serverURL + '/api/system';
     const logsUrl = serverURL + '/api/logs';
     const eventsUrl = serverURL + '/api/events';
     const intelligenceUrl = serverURL + '/api/intelligence';
     const updateUrl = serverURL + '/api/update';
-    const pingServerUrl = serverURL + '/api/ping';
 
-    var pingInternal = 100;
-
-    $('nav').hide();
-    $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
-
-    $(window).on('load', function(){
-      setTimeout(pingServer, pingInternal);
-    });
-    
-    function pingServer() {
-      $.ajax({
-          url: pingServerUrl + "?t=" + new Date().getTime(),
-          type: 'get',
-          cache: false,
-          success: function(data){
-            $("#loadingScreen").fadeOut(500, function() {
-              // fadeOut complete. Remove the loading div
-              $("#loadingScreen" ).hide(); //makes page more lightweight 
-              $('nav').show();
-            }); 
-            setTimeout(pingServer, pingInternal);
-          },
-          error: function(){
-              console.log('Error connecting to server!');
-              $('#loadingScreen').show();
-              $('nav').hide();
-              setTimeout(pingServer, pingInternal);
-          }
-      });
-    }
-    pingServer();
 
     $.getJSON(wifiStatusUrl, function (data) {
       $('#wifistatus').val(data)
@@ -58,15 +24,6 @@ $(document).ready(function() {
 
     $.getJSON(eventsUrl, function (data) {
       $('#eventsview').val(data);
-    });
-
-    // Populate System Info
-    let sysInfo = $('#sysinfolist');
-
-    $.getJSON(systemUrl, function (data) {
-      data.forEach(function (item) {
-        sysInfo.append($('<li>' + item + '</li>'));
-      })
     });
 
   // Populate dropdown with list of Wifis
@@ -102,47 +59,6 @@ $(document).ready(function() {
         data: getFormDataInJson($('form#wifiForm').serializeArray()),
         success: function(data) {
           console.log('Connecting to Wifi...')
-        }
-    });
-  });
-
-  $('#shutdownButton').click( function() {
-    console.log('shutdownButton is clicked...')
-    $.ajax({
-        url: systemUrl,
-        type: 'post',
-        dataType: 'json',
-        data: JSON.stringify({"command": "shutdown"}),
-        success: function(data) {
-          console.log('Shutting Down...')
-        }
-    });
-  });
-
-
-  $('#rebootButton').click( function() {
-    console.log('rebootButton is clicked...')
-    $.ajax({
-        url: systemUrl,
-        type: 'post',
-        dataType: 'json',
-        data: JSON.stringify({"command": "reboot"}),
-        success: function(data) {
-          console.log('Rebooting...')
-        }
-    });
-  });
-
-
-  $('#resetFactoryButton').click( function() {
-    console.log('resetFactoryButton is clicked...')
-    $.ajax({
-        url: systemUrl,
-        type: 'post',
-        dataType: 'json',
-        data: JSON.stringify({"command": "reset_factory"}),
-        success: function(data) {
-          console.log('Reset Factory...')
         }
     });
   });
