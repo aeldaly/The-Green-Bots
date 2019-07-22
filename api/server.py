@@ -17,9 +17,12 @@ from tornado.options import define, options
 # import rospy
 # from geometry_msgs.msg import Twist
 
-CONFIG_FILE = '/opt/thegreenbot/config/config.json'
-EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
-VERSION_FILE = '/opt/thegreenbot/VERSION'
+API_SERVER_ROOT = os.environ.get('API_SERVER_ROOT')
+GREENBOTS_ROOT = os.environ.get('GREENBOTS_ROOT')
+
+CONFIG_FILE = os.path.join(API_SERVER_ROOT, 'bot-config.json')
+EVENTS_FILE = os.path.join(GREENBOTS_ROOT, 'logs/events.log')
+VERSION_FILE = os.path.join(API_SERVER_ROOT, 'VERSION')
 
 
 class Application(web.Application):
@@ -49,7 +52,8 @@ class BaseHandler(web.RequestHandler):
 
 def add_event(new_line):
     with open(EVENTS_FILE, 'a+') as events_file:
-        events_file.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
+        events_file.write(datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S.%f") + ' - ' + str(new_line) + '\n')
 
 
 def update_config_file(new_dict):
@@ -88,12 +92,15 @@ def get_config_file():
         config = json.load(config_f)
     return config
 
+
 def get_version():
     version_f = open(VERSION_FILE, 'r')
     return version_f.read()
 
+
 def cmd(command):
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log, _err = proc.communicate()
     try:
         log = log.decode("utf-8")
@@ -102,12 +109,15 @@ def cmd(command):
     else:
         return log
 
+
 def tail(filename, lines=20):
     return cmd(['tail', '-%d' % lines, filename])
 
+
 def restart_supervisord():
     add_event('Restarting supervisord now ...')
-    cmd(['sudo', 'killall', 'supervisord', '&&', 'sudo', 'supervisord', '-c', '/etc/supervisord.conf'])
+    cmd(['sudo', 'killall', 'supervisord', '&&', 'sudo',
+         'supervisord', '-c', '/etc/supervisord.conf'])
 
 
 class UpdateHandler(BaseHandler):
@@ -118,7 +128,8 @@ class UpdateHandler(BaseHandler):
         add_event('Updating The Green Bot local repository...')
         result = cmd(['git', 'clone', '-b', data.get('gitbranch', 'master'), '--single-branch', '--depth', '1', data.get('gitrepo'), tmp_destination])
         result += 'Storing new cloned repo on %s\n' % tmp_destination
-        result += 'Replacing old repo at %s with new cloned repo from %s\n' % (final_destination, tmp_destination)
+        result += 'Replacing old repo at %s with new cloned repo from %s\n' % (
+            final_destination, tmp_destination)
         result += 'Restarting supervisord...\n'
         result += 'You need to refresh this page!\n'
         cmd(['mv', tmp_destination, final_destination])
@@ -172,8 +183,10 @@ class SystemHandler(BaseHandler):
     def get(self):
         config = get_config_file()
         sys_lines = []
-        sys_lines.append('Firmware Version: %s\n' % config.get('firmware', {}).get('version'))
-        sys_lines.append('Last Updated: %s\n' % config.get('firmware', {}).get('last_updated'))
+        sys_lines.append('Firmware Version: %s\n' %
+                         config.get('firmware', {}).get('version'))
+        sys_lines.append('Last Updated: %s\n' %
+                         config.get('firmware', {}).get('last_updated'))
         sys_lines.append('$ uname: \n\t%s' % '\n\t'.join(os.uname()))
         self.write(json.dumps(sys_lines))
 
@@ -200,7 +213,7 @@ class SystemHandler(BaseHandler):
 
 
 class WifiStatusHandler(BaseHandler):
-    
+
     def get(self):
         wlan0 = ('#' * 10) + ' $ iwconfig wlan0 ' + ('#' * 10) + '\n'
         wlan0 += cmd(['iwconfig', 'wlan0'])
@@ -235,14 +248,13 @@ network:
         new_ip = self.configure_netplan(data)
         self.write(json.dumps(new_ip))
 
-
     def get(self):
         try:
             wifis = Cell.all('wlan0')
             SSIDs = [wifi.ssid for wifi in wifis]
             self.write(json.dumps(SSIDs))
         except Exception as ex:
-            self.write(json.dumps(['wlan0 Network Interface Is Down.',]))
+            self.write(json.dumps(['wlan0 Network Interface Is Down.', ]))
 
     def generate_wireless_yaml(self, data):
         return WifiHandler.WIRELESS_YAML_TEMPLATE % data
@@ -257,7 +269,7 @@ network:
             cmd(['sudo', 'netplan', 'apply'])
             ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
             return ip
-        
+
 
 def main(args):
     define("port", default=args.port, help="Run on the given port", type=int)
@@ -269,6 +281,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Web Interface api')
 
-    parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
+    parser.add_argument('--port', type=int,
+                        help="port to run on. Must be supplied.")
     args = parser.parse_args()
     main(args)

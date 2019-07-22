@@ -17,9 +17,12 @@ import base64
 # import rospy
 # from geometry_msgs.msg import Twist
 
-CONFIG_FILE = '/opt/thegreenbot/config/config.json'
-EVENTS_FILE = '/opt/thegreenbot/logs/events.log'
-VERSION_FILE = '/opt/thegreenbot/VERSION'
+API_SERVER_ROOT = os.environ.get('API_SERVER_ROOT')
+GREENBOTS_ROOT = os.environ.get('GREENBOTS_ROOT')
+
+CONFIG_FILE = os.path.join(API_SERVER_ROOT, 'bot-config.json')
+EVENTS_FILE = os.path.join(GREENBOTS_ROOT, 'logs/events.log')
+VERSION_FILE = os.path.join(API_SERVER_ROOT, 'VERSION')
 
 
 class Application(web.Application):
@@ -46,7 +49,7 @@ class CameraHandler(BaseHandler):
         retval, frame = self.application.camera.read()
         if retval != True:
             raise ValueError("Can't read frame")
-        encoded_img = cv2.imencode('.png',frame)[1]
+        encoded_img = cv2.imencode('.png', frame)[1]
         frame_b64 = base64.b64encode(encoded_img)
         self.write(frame_b64)
 
@@ -72,6 +75,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Web Interface api')
 
-    parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
+    parser.add_argument('--port', type=int,
+                        help="port to run on. Must be supplied.")
     args = parser.parse_args()
     main(args)
