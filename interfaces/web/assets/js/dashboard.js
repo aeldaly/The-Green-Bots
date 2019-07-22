@@ -1,7 +1,4 @@
-/* globals Chart:false, feather:false */
-
-(function($) {
-  $(document).ready(function() {
+$(document).ready(function() {
     'use strict'
 
     feather.replace()
@@ -15,6 +12,35 @@
     const logsUrl = serverURL + '/api/logs';
     const eventsUrl = serverURL + '/api/events';
     const intelligenceUrl = serverURL + '/api/intelligence';
+    const pingServerUrl = serverURL + '/api/ping';
+
+    var pingInternal = 1;
+
+    $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
+
+    $(window).on('load', function(){
+      setTimeout(pingServer, pingInternal);
+    });
+    
+    function pingServer() {
+      $.ajax({
+          url: pingServerUrl + "?t=" + new Date().getTime(),
+          type: 'get',
+          cache: false,
+          success: function(data){
+            $( "#loadingScreen" ).fadeOut(500, function() {
+              // fadeOut complete. Remove the loading div
+              $( "#loadingScreen" ).remove(); //makes page more lightweight 
+            }); 
+          },
+          error: function(){
+              console.log('Error connecting to server!');
+              $('#loadingScreen').show();
+              setTimeout(pingServer, pingInternal);
+          }
+      });
+    }
+    pingServer();
 
     $.getJSON(wifiStatusUrl, function (data) {
       $('#wifistatus').val(data)
@@ -174,5 +200,4 @@
     });
   });
 
-  });
-})($);
+});

@@ -35,6 +35,7 @@ class Application(web.Application):
             (r"/api/events", EventHandler),
             (r"/api/intelligence", IntelligenceHandler),
             (r"/api/update", UpdateHandler)
+            (r"/api/ping", PingHandler)
         ]
         web.Application.__init__(self, handlers)
 
@@ -130,6 +131,11 @@ class UpdateHandler(BaseHandler):
         add_event('UPDATING!\n\t' + result)
         self.write(json.dumps(result))
         restart_supervisord()
+
+
+class PingHandler(BaseHandler):
+    def get(self):
+        self.write(json.dumps(True))
 
 
 class LogHandler(BaseHandler):
