@@ -24,8 +24,8 @@ sudo snap install avahi
 # update repo, copy any new aliases and source
 cd $GREENBOTS_ROOT/src
 git pull
-cp configs/bash/bash_aliases ~/.bash_aliases
-source ~/.bashrc
+cp configs/bash/bash_aliases /etc/profile.d/bash_aliases.sh
+source /etc/profile
 
 $GREENBOTS_ROOT/src/scripts/folders_and_links.sh
 
