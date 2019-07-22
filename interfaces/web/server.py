@@ -34,7 +34,7 @@ class Application(web.Application):
             (r"/api/logs", LogHandler),
             (r"/api/events", EventHandler),
             (r"/api/intelligence", IntelligenceHandler),
-            (r"/api/update", UpdateHandler)
+            (r"/api/update", UpdateHandler),
             (r"/api/ping", PingHandler)
         ]
         web.Application.__init__(self, handlers)

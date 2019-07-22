@@ -14,7 +14,7 @@ $(document).ready(function() {
     const intelligenceUrl = serverURL + '/api/intelligence';
     const pingServerUrl = serverURL + '/api/ping';
 
-    var pingInternal = 1;
+    var pingInternal = 100;
 
     $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
