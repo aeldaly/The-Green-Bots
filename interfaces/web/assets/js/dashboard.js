@@ -12,6 +12,7 @@ $(document).ready(function() {
     const logsUrl = serverURL + '/api/logs';
     const eventsUrl = serverURL + '/api/events';
     const intelligenceUrl = serverURL + '/api/intelligence';
+    const updateUrl = serverURL + '/api/update';
     const pingServerUrl = serverURL + '/api/ping';
 
     var pingInternal = 100;
@@ -193,7 +194,7 @@ $(document).ready(function() {
   $('#updateButton').click( function() {
     console.log('connectButton is clicked...')
     $.ajax({
-        url: wifiUrl,
+        url: updateUrl,
         type: 'post',
         dataType: 'json',
         data: getFormDataInJson($('form#updateForm').serializeArray()),
