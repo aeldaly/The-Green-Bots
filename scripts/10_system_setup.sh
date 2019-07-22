@@ -31,6 +31,8 @@ git update
 cp configs/bash/bash_aliases ~/.bash_aliases
 exec $SHELL
 
+./folders_and_links.sh
+
 # Need to have www-data to be able to run sudo commands
 # This is normally a pretty insecure thing to do.
 # This is a one user educational bot though, so we think it's ok
