@@ -26,6 +26,7 @@
 ### END INIT INFO
 
 . /lib/lsb/init-functions
+. /etc/profile.d/bash_aliases.sh
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/local/bin/supervisord

@@ -58,13 +58,13 @@ http {
     server {
         listen 80;
         server_name thegreenbot.local;
+        root <%= ENV['WEB_INTERFACE_ROOT'] %>;
 
         # Allow file uploads
         client_max_body_size 50M;
 
         location ^~ /assets/ {
-            root <%= ENV['WEB_INTERFACE_ROOT'] %>;
-            if (\$query_string) {
+            if ($query_string) {
                 expires max;
             }
         }
@@ -74,19 +74,19 @@ http {
 
         location /api/operate {
             proxy_pass_header Server;
-            proxy_set_header Host \$http_host;
+            proxy_set_header Host $http_host;
             proxy_redirect off;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Scheme \$scheme;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Scheme $scheme;
             proxy_pass http://operate;
         }
 
         location /api {
             proxy_pass_header Server;
-            proxy_set_header Host \$http_host;
+            proxy_set_header Host $http_host;
             proxy_redirect off;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Scheme \$scheme;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Scheme $scheme;
             proxy_pass http://frontends;
         }
     }

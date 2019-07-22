@@ -14,10 +14,10 @@ sudo cp $GREENBOTS_ROOT/src/configs/bot-config.json $API_SERVER_ROOT/bot-config.
 
 sudo cp $GREENBOTS_ROOT/src/configs/firmware-config.txt /boot/firmware/config.txt
 
-sudo rm $SUPERVISOR_ROOT/conf/supervisord.conf
+sudo -E bash -c "rm $SUPERVISOR_ROOT/conf/supervisord.conf"
 sudo rm /etc/init.d/greenbots-api.sh
-sudo ln -s $GREENBOTS_ROOT/src/configs/supervisord/supervisord.conf $SUPERVISOR_ROOT/conf
-sudo ln -s $GREENBOTS_ROOT/src/configs/init_scripts/greenbots-api.sh /etc/init.d/
+sudo -E bash -c "ln -s $GREENBOTS_ROOT/src/configs/supervisord/supervisord.conf $SUPERVISOR_ROOT/conf"
+sudo -E bash -c "ln -s $GREENBOTS_ROOT/src/configs/init_scripts/greenbots-api.sh /etc/init.d/"
 
 sudo rm /etc/nginx/nginx.conf
 sudo -E bash -c "ruby $GREENBOTS_ROOT/src/configs/nginx/nginx.rb"
