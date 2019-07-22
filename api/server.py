@@ -124,7 +124,7 @@ class UpdateHandler(BaseHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         tmp_destination = '/tmp/thegreenbots'
-        final_destination = '/opt/thegreenbots'
+        final_destination = '/opt/thegreenbots/src'
         add_event('Updating The Green Bot local repository...')
         result = cmd([
             'git', 'clone', '-b', data.get('gitbranch', 'master'), 
