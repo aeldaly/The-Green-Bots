@@ -1,6 +1,5 @@
 $(document).ready(function() {
     'use strict'
-    console.log('Dashboard.js loaded...')
 
     var serverURL = "http://thegreenbot.local";
     // var serverURL = "http://localhost:8000";
