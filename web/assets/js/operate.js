@@ -58,13 +58,13 @@ $(document).ready(function() {
         e = e || window.event;
         if (e.keyCode == '38') {
             // up arrow
-            console.log('up arrow')
-            controlKey = 'up';
+            console.log('forward arrow')
+            controlKey = 'forward';
         }
         else if (e.keyCode == '40') {
             // down arrow
-            console.log('down arrow')
-            controlKey = 'down';
+            console.log('reverse arrow')
+            controlKey = 'reverse';
         }
         else if (e.keyCode == '37') {
         // left arrow
