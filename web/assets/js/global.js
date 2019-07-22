@@ -4,17 +4,18 @@ const pingServerUrl = serverURL + '/api/ping';
 const systemUrl = serverURL + '/api/system';
 
 function populateSystemInfo(){
-  console.log('Called populateSystemInfo()...')
-  // Populate System Info
   let sysInfo = $('#sysinfolist');
-
   $.getJSON(systemUrl, function (data) {
     data.forEach(function (item) {
-      console.log(item)
       sysInfo.append($('<li>' + item + '</li>'));
     })
   });
 };
+
+function SuccessFuncAfterNavBarLoaded(){
+  populateSystemInfo();
+  feather.replace();
+}
 
 function includeHTML() {
     var z, i, elmnt, file, xhttp;
@@ -31,8 +32,7 @@ function includeHTML() {
             if (this.readyState == 4) {
                 if (this.status == 200) {
                   elmnt.innerHTML = this.responseText;
-                  populateSystemInfo();
-                  feather.replace();
+                  SuccessFuncAfterNavBarLoaded();
                 }
                 if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
                 /*remove the attribute, and call this function once more:*/
