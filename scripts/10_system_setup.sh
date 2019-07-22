@@ -18,20 +18,16 @@ sudo snap refresh core --edge
 sudo snap install avahi-client
 sudo snap install avahi
 
-# Enabling Camera
-echo "start_x=1" >> /boot/firmware/config.txt
-echo "gpu_mem=128" >> /boot/firmware/config.txt
-
 # repo is already on the base image
 # aliases is also on the base image
 
 # update repo, copy any new aliases and source
 cd $GREENBOTS_ROOT/src
-git update
+git pull
 cp configs/bash/bash_aliases ~/.bash_aliases
-exec $SHELL
+source ~/.bashrc
 
-./folders_and_links.sh
+$GREENBOTS_ROOT/src/scripts/folders_and_links.sh
 
 # Need to have www-data to be able to run sudo commands
 # This is normally a pretty insecure thing to do.
@@ -41,33 +37,6 @@ sudo usermod -a -G adm www-data
 
 sudo chown -R ubuntu:ubuntu $GREENBOTS_ROOT
 # sudo chown -R www-data $GREENBOTS_ROOT/web-interface
-
-echo "OpenCV installation"
-
-# OpenCV Installation
-OPENCV_ROOT=/opt/opencv
-OPENCV_CONTRIB_ROOT=/opt/opencv_contrib
-
-sudo mkdir $OPENCV_ROOT
-sudo mkdir $OPENCV_CONTRIB_ROOT
-sudo chown -R ubuntu:ubuntu $OPENCV_ROOT
-sudo chown -R ubuntu:ubuntu $OPENCV_CONTRIB_ROOT
-
-git clone https://github.com/Itseez/opencv.git $OPENCV_ROOT --depth 1 --branch 3.4.0
-git clone https://github.com/Itseez/opencv_contrib.git $OPENCV_CONTRIB_ROOT --depth 1 --branch 3.4.0
-
-cd $OPENCV_ROOT
-mkdir build
-git checkout 3.4.0
-
-cd $OPENCV_CONTRIB_ROOT
-git checkout 3.4.0
-
-cd $OPENCV_ROOT
-cmake
-make -j4
-sudo make install
-sudo ldconfig
 
 sudo ifconfig wlan0 up
 
