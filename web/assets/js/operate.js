@@ -1,3 +1,24 @@
+var img = document.getElementById("liveImg");
+var fpsText = document.getElementById("fps");
+
+var target_fps = 24;
+
+var request_start_time = performance.now();
+var start_time = performance.now();
+var time = 0;
+var request_time = 0;
+var time_smoothing = 0.9; // larger=more smoothing
+var request_time_smoothing = 0.2; // larger=more smoothing
+var target_time = 1000 / target_fps;
+
+var ws;
+
+function requestImage() {
+    request_start_time = performance.now();
+    ws.send('more');
+}
+
+
 var controlSignal;
 $(document).ready(function() {
     'use strict'
@@ -7,36 +28,75 @@ $(document).ready(function() {
     const cameraURL = serverURL + "/api/operate/camera";
     const controlURL = serverURL + "/api/operate/control";
 
-    const refreshInterval = 1;
 
-    function timedRefresh() {
-        $.ajax({
-            url: cameraURL + "?t=" + new Date().getTime(),
-            type: 'get',
-            cache: false,
-            success: function(data){
-                imageObj.src = "data:image/jpeg;base64," + data;
-            },
-            error: function(){
-                console.log('error!');
-                setTimeout(timedRefresh, refreshInterval);
-            }
-        });
+    var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
+    var path = location.pathname;
+    if(path.endsWith("operate.html"))
+    {
+        path = path.substring(0, path.length - "operate.html".length);
     }
-    function drawOnCanvas() {
-        var canvas = document.getElementById("canvas");
-        var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(imageObj, 0, 0, canvas.width, canvas.height);
+    if(!path.endsWith("/")) {
+        path = path + "/";
     }
+    ws = new WebSocket(wsProtocol + location.host + path + "/api/operate/camera");
+    ws.binaryType = 'arraybuffer';
 
-    var imageObj = new Image();
-    imageObj.onload = function () {
-        drawOnCanvas();
-        setTimeout(timedRefresh, refreshInterval);
-    }
+    ws.onopen = function() {
+        console.log("connection was established");
+        start_time = performance.now();
+        requestImage();
+    };
+    
+    ws.onmessage = function(evt) {
+        var arrayBuffer = evt.data;
+        var blob  = new Blob([new Uint8Array(arrayBuffer)], {type: "image/jpeg"});
+        img.src = window.URL.createObjectURL(blob);
+    
+        var end_time = performance.now();
+        var current_time = end_time - start_time;
+        // smooth with moving average
+        time = (time * time_smoothing) + (current_time * (1.0 - time_smoothing));
+        start_time = end_time;
+        var fps = Math.round(1000 / time);
+        fpsText.textContent = fps;
+    
+        var current_request_time = performance.now() - request_start_time;
+        // smooth with moving average
+        request_time = (request_time * request_time_smoothing) + (current_request_time * (1.0 - request_time_smoothing));
+        var timeout = Math.max(0, target_time - request_time);
+    
+        setTimeout(requestImage, timeout);
+    };
+    // const refreshInterval = 1;
 
-    timedRefresh();
+    // function timedRefresh() {
+    //     $.ajax({
+    //         url: cameraURL + "?t=" + new Date().getTime(),
+    //         type: 'get',
+    //         cache: false,
+    //         success: function(data){
+    //             imageObj.src = "data:image/jpeg;base64," + data;
+    //         },
+    //         error: function(){
+    //             console.log('error!');
+    //             setTimeout(timedRefresh, refreshInterval);
+    //         }
+    //     });
+    // }
+    // function drawOnCanvas() {
+    //     var canvas = document.getElementById("canvas");
+    //     var ctx = canvas.getContext("2d");
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //     ctx.drawImage(imageObj, 0, 0, canvas.width, canvas.height);
+    // }
+
+    // var imageObj = new Image();
+    // imageObj.onload = function () {
+    //     drawOnCanvas();
+    //     setTimeout(timedRefresh, refreshInterval);
+    // }
+
+    // timedRefresh();
 
     function sendControlData(controlKey) {
         $.ajax({

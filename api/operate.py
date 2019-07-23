@@ -1,42 +1,96 @@
+#!/usr/bin/env python3
+
 import argparse
+import os
+import io
 import json
-import os.path
-import subprocess
-from datetime import datetime
+import sys
 
-import netifaces
-from wifi import Cell, Scheme
-
-import tornado.httpserver
 import tornado.ioloop
+import tornado.websocket
 from tornado import web
-from tornado.options import define, options
 
-import cv2
-import base64
+import pygame.camera
+import pygame.image
+
+from PIL import Image
 import RPi.GPIO as GPIO
-
-import time
 
 from server import BaseHandler
 
-API_SERVER_ROOT = os.environ.get('API_SERVER_ROOT')
-GREENBOTS_ROOT = os.environ.get('GREENBOTS_ROOT')
-
-CONFIG_FILE = os.path.join(API_SERVER_ROOT, 'bot-config.json')
-EVENTS_FILE = os.path.join(GREENBOTS_ROOT, 'logs/events.log')
-VERSION_FILE = os.path.join(API_SERVER_ROOT, 'VERSION')
 
 
-class Application(web.Application):
-    def __init__(self, driver):
-        self.camera = cv2.VideoCapture(0)
-        self.driver = driver
-        handlers = [
-            (r"/api/operate/camera", CameraHandler),
-            (r"/api/operate/control", ControlHandler),
-        ]
-        web.Application.__init__(self, handlers)
+class Camera:
+
+    def __init__(self, index, width, height, quality, stopdelay):
+        print("Initializing camera...")
+        pygame.camera.init()
+        camera_name = pygame.camera.list_cameras()[index]
+        self._cam = pygame.camera.Camera(camera_name, (width, height))
+        print("Camera initialized")
+        self.is_started = False
+        self.stop_requested = False
+        self.quality = quality
+        self.stopdelay = stopdelay
+
+    def request_start(self):
+        if self.stop_requested:
+            print("Camera continues to be in use")
+            self.stop_requested = False
+        if not self.is_started:
+            self._start()
+
+    def request_stop(self):
+        if self.is_started and not self.stop_requested:
+            self.stop_requested = True
+            print("Stopping camera in " + str(self.stopdelay) + " seconds...")
+            tornado.ioloop.IOLoop.current().call_later(self.stopdelay, self._stop)
+
+    def _start(self):
+        print("Starting camera...")
+        self._cam.start()
+        print("Camera started")
+        self.is_started = True
+
+    def _stop(self):
+        if self.stop_requested:
+            print("Stopping camera now...")
+            self._cam.stop()
+            print("Camera stopped")
+            self.is_started = False
+            self.stop_requested = False
+
+    def get_jpeg_image_bytes(self):
+        img = self._cam.get_image()
+        imgstr = pygame.image.tostring(img, "RGB", False)
+        pimg = Image.frombytes("RGB", img.get_size(), imgstr)
+        with io.BytesIO() as bytesIO:
+            pimg.save(bytesIO, "JPEG", quality=self.quality, optimize=True)
+            return bytesIO.getvalue()
+
+
+class CameraHandler(tornado.websocket.WebSocketHandler):
+    clients = set()
+
+    def check_origin(self, origin):
+        # Allow access from every origin
+        return True
+
+    def open(self):
+        CameraHandler.clients.add(self)
+        print("WebSocket opened from: " + self.request.remote_ip)
+        self.application.camera.request_start()
+
+    def on_message(self, message):
+        jpeg_bytes = self.application.camera.get_jpeg_image_bytes()
+        self.write_message(jpeg_bytes, binary=True)
+
+    def on_close(self):
+        CameraHandler.clients.remove(self)
+        print("WebSocket closed from: " + self.request.remote_ip)
+        if len(CameraHandler.clients) == 0:
+            self.application.camera.request_stop()
+
 
 class Drive:
 
@@ -137,16 +191,6 @@ class Drive:
         GPIO.output(self.IN4, GPIO.LOW)
 
 
-class CameraHandler(BaseHandler):
-    def get(self):
-        retval, frame = self.application.camera.read()
-        if retval != True:
-            raise ValueError("Can't read frame")
-        encoded_img = cv2.imencode('.jpeg', frame)[1]
-        frame_b64 = base64.b64encode(encoded_img)
-        self.write(frame_b64)
-
-
 class ControlHandler(BaseHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -163,18 +207,36 @@ class ControlHandler(BaseHandler):
         self.write(json.dumps(data))
 
 
+
+class Application(web.Application):
+    def __init__(self, camera, driver):
+        self.camera = camera
+        self.driver = driver
+        handlers = [
+            (r"/api/operate/camera", CameraHandler),
+            (r"/api/operate/control", ControlHandler),
+        ]
+        web.Application.__init__(self, handlers)
+
 def main(args):
-    define("port", default=args.port, help="Run on the given port", type=int)
     http_api = tornado.httpserver.HTTPServer(Application(
+        camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay),
         driver = Drive()
     ))
-    http_api.listen(options.port)
+    http_api.listen(args.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Web Interface api')
+    
+    parser = argparse.ArgumentParser(description='Start the PyImageStream server.')
 
-    parser.add_argument('--port', type=int, help="port to run on. Must be supplied.")
+    parser.add_argument('--port', default=8888, type=int, help='Web server port (default: 8888)')
+    parser.add_argument('--camera', default=0, type=int, help='Camera index, first camera is 0 (default: 0)')
+    parser.add_argument('--width', default=640, type=int, help='Width (default: 640)')
+    parser.add_argument('--height', default=480, type=int, help='Height (default: 480)')
+    parser.add_argument('--quality', default=70, type=int, help='JPEG Quality 1 (worst) to 100 (best) (default: 70)')
+    parser.add_argument('--stopdelay', default=7, type=int, help='Delay in seconds before the camera will be stopped after all clients have disconnected (default: 7)')
+
     args = parser.parse_args()
     main(args)
