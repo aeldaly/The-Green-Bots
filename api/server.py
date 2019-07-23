@@ -13,6 +13,8 @@ from tornado import web
 from tornado.options import define, options
 from datetime import timedelta
 
+import psutil
+
 # import cv2
 # import base64
 # import rospy
@@ -190,6 +192,7 @@ class SystemHandler(BaseHandler):
         config = get_config_file()
         sys_lines = []
         sys_lines.append('System Uptime: %s\n' % self._uptime())
+        sys_lines.append('Usage -> [CPU: %f % \t RAM: %f MB ]\n' % (psutil.cpu_percent(), psutil.virtual_memory() >> 20))
         sys_lines.append('Firmware Version: %s\n' % config.get('firmware', {}).get('version'))
         sys_lines.append('Last Updated: %s\n' % config.get('firmware', {}).get('last_updated'))
         sys_lines.append('$ uname: \n\t%s' % '\n\t'.join(os.uname()))

@@ -3,18 +3,18 @@ var serverURL = "http://thegreenbot.local";
 const pingServerUrl = serverURL + '/api/ping';
 const systemUrl = serverURL + '/api/system';
 
-function populateSystemInfo(){
-  let sysInfo = $('#sysinfolist');
-  $.getJSON(systemUrl, function (data) {
-    data.forEach(function (item) {
-      sysInfo.append($('<li>' + item + '</li>'));
-    })
-  });
-};
 
 function SuccessFuncAfterNavBarLoaded(){
-  populateSystemInfo();
-  feather.replace();
+
+  $('#systemInfoButton').click( function() {
+    let sysInfo = $('#sysinfolist');
+    $.getJSON(systemUrl, function (data) {
+      data.forEach(function (item) {
+        sysInfo.append($('<li>' + item + '</li>'));
+      })
+    });
+  });
+
   $('#shutdownButton').click( function() {
     console.log('shutdownButton is clicked...')
     $.ajax({
@@ -41,6 +41,7 @@ function SuccessFuncAfterNavBarLoaded(){
         }
     });
   });
+  feather.replace();
 }
 
 function includeHTML() {

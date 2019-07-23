@@ -7,7 +7,7 @@ sudo apt -y install nginx python3-pip wireless-tools pkg-config
 
 sudo apt -y auto-remove
 
-sudo pip3 install tornado supervisor wifi
+sudo pip3 install tornado supervisor wifi psutil
 
 # Enable thegreenbot.local
 sudo echo thegreenbot > /etc/hostname
