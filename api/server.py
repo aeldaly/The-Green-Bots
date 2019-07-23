@@ -11,6 +11,7 @@ import tornado.httpserver
 import tornado.ioloop
 from tornado import web
 from tornado.options import define, options
+from datetime import timedelta
 
 # import cv2
 # import base64
@@ -188,10 +189,9 @@ class SystemHandler(BaseHandler):
     def get(self):
         config = get_config_file()
         sys_lines = []
-        sys_lines.append('Firmware Version: %s\n' %
-                         config.get('firmware', {}).get('version'))
-        sys_lines.append('Last Updated: %s\n' %
-                         config.get('firmware', {}).get('last_updated'))
+        sys_lines.append('System Uptime: %s\n' % self._uptime())
+        sys_lines.append('Firmware Version: %s\n' % config.get('firmware', {}).get('version'))
+        sys_lines.append('Last Updated: %s\n' % config.get('firmware', {}).get('last_updated'))
         sys_lines.append('$ uname: \n\t%s' % '\n\t'.join(os.uname()))
         self.write(json.dumps(sys_lines))
 
@@ -203,6 +203,13 @@ class SystemHandler(BaseHandler):
             self._reboot()
         elif data['command'] == 'reset_factory':
             self._reset_factory()
+
+    def _uptime(self):
+        uptime_string = None
+        with open('/proc/uptime', 'r') as f:
+            uptime_seconds = float(f.readline().split()[0])
+            uptime_string = str(timedelta(seconds = uptime_seconds))
+        return uptime_string
 
     def _shutdown(self):
         add_event('Shutting Down')
