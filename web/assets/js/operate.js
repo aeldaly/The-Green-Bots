@@ -150,10 +150,10 @@ $(document).ready(function() {
         sendControlData(key);
     }
 
-    window.addEventListener('resize', resizeCanvas, false);
-    resizeCanvas();    /// call the first time page is loaded
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
+    // window.addEventListener('resize', resizeCanvas, false);
+    // resizeCanvas();    /// call the first time page is loaded
+    // function resizeCanvas() {
+    //     canvas.width = window.innerWidth;
+    //     canvas.height = window.innerHeight;
+    // }
 });

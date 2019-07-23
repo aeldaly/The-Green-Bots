@@ -233,7 +233,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Start the PyImageStream server.')
 
     parser.add_argument('--port', default=8888, type=int, help='Web server port (default: 8888)')
-    parser.add_argument('--camera', default=0, type=int, help='Camera index, first camera is 0 (default: 0)')
+    parser.add_argument('--camera', default=1, type=int, help='Camera index, first camera is 0 (default: 0)')
     parser.add_argument('--width', default=640, type=int, help='Width (default: 640)')
     parser.add_argument('--height', default=480, type=int, help='Height (default: 480)')
     parser.add_argument('--quality', default=70, type=int, help='JPEG Quality 1 (worst) to 100 (best) (default: 70)')
