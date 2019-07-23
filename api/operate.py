@@ -136,6 +136,14 @@ class Drive:
         GPIO.output(self.IN3, GPIO.HIGH)
         GPIO.output(self.IN4, GPIO.LOW)
 
+    def reverse(self):
+        print("Stopping...")
+        self._setup_motors()
+        GPIO.output(self.IN1, GPIO.LOW)
+        GPIO.output(self.IN2, GPIO.LOW)
+        GPIO.output(self.IN3, GPIO.LOW)
+        GPIO.output(self.IN4, GPIO.LOW)
+
 
 class CameraHandler(BaseHandler):
     def get(self):
@@ -158,6 +166,8 @@ class ControlHandler(BaseHandler):
             self.application.driver.left():
         elif data == 'right':
             self.application.driver.right():
+        elif data == 'stop':
+            self.application.driver.stop():
         self.write(json.dumps(data))
 
 

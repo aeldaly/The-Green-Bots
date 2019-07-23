@@ -76,6 +76,11 @@ $(document).ready(function() {
             console.log('right arrow')
             controlKey = 'right';
         }
+        else if (e.keyCode == '32') {
+        // space bar
+            console.log('stop - space bar')
+            controlKey = 'stop';
+        }
         if (controlKey != null){
             sendControlData(controlKey);
         }
