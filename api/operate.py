@@ -173,7 +173,9 @@ class ControlHandler(BaseHandler):
 
 def main(args):
     define("port", default=args.port, help="Run on the given port", type=int)
-    http_api = tornado.httpserver.HTTPServer(Application({}))
+    http_api = tornado.httpserver.HTTPServer(Application(
+        driver = Drive()
+    ))
     http_api.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
