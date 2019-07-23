@@ -142,7 +142,7 @@ class CameraHandler(BaseHandler):
         retval, frame = self.application.camera.read()
         if retval != True:
             raise ValueError("Can't read frame")
-        encoded_img = cv2.imencode('.png', frame)[1]
+        encoded_img = cv2.imencode('.jpeg', frame)[1]
         frame_b64 = base64.b64encode(encoded_img)
         self.write(frame_b64)
 
