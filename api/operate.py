@@ -121,8 +121,8 @@ class Drive:
     def right(self):
         print("Moving right...")
         self._setup_motors()
-        GPIO.output(self.IN1, GPIO.HIGH)
-        GPIO.output(self.IN2, GPIO.LOW)
+        GPIO.output(self.IN1, GPIO.LOW)
+        GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN3, GPIO.LOW)
         # GPIO.output(self.IN4, GPIO.HIGH)
         GPIO.output(self.IN4, GPIO.LOW)
@@ -134,14 +134,6 @@ class Drive:
         # GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.HIGH)
-        GPIO.output(self.IN4, GPIO.LOW)
-
-    def reverse(self):
-        print("Stopping...")
-        self._setup_motors()
-        GPIO.output(self.IN1, GPIO.LOW)
-        GPIO.output(self.IN2, GPIO.LOW)
-        GPIO.output(self.IN3, GPIO.LOW)
         GPIO.output(self.IN4, GPIO.LOW)
 
 

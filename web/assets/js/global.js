@@ -15,6 +15,32 @@ function populateSystemInfo(){
 function SuccessFuncAfterNavBarLoaded(){
   populateSystemInfo();
   feather.replace();
+  $('#shutdownButton').click( function() {
+    console.log('shutdownButton is clicked...')
+    $.ajax({
+        url: systemUrl,
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({"command": "shutdown"}),
+        success: function(data) {
+          console.log('Shutting Down...')
+        }
+    });
+  });
+
+
+  $('#rebootButton').click( function() {
+    console.log('rebootButton is clicked...')
+    $.ajax({
+        url: systemUrl,
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({"command": "reboot"}),
+        success: function(data) {
+          console.log('Rebooting...')
+        }
+    });
+  });
 }
 
 function includeHTML() {
@@ -54,34 +80,6 @@ $(document).ready(function() {
     includeHTML();
 
     populateSystemInfo();
-
-    $('#shutdownButton').click( function() {
-      console.log('shutdownButton is clicked...')
-      $.ajax({
-          url: systemUrl,
-          type: 'post',
-          dataType: 'json',
-          data: JSON.stringify({"command": "shutdown"}),
-          success: function(data) {
-            console.log('Shutting Down...')
-          }
-      });
-    });
-  
-  
-    $('#rebootButton').click( function() {
-      console.log('rebootButton is clicked...')
-      $.ajax({
-          url: systemUrl,
-          type: 'post',
-          dataType: 'json',
-          data: JSON.stringify({"command": "reboot"}),
-          success: function(data) {
-            console.log('Rebooting...')
-          }
-      });
-    });
-
 
     var pingInternal = 100;
 
