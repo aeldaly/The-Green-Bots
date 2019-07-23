@@ -80,8 +80,6 @@ $(document).ready(function() {
     'use strict'
     includeHTML();
 
-    populateSystemInfo();
-
     var pingInternal = 100;
 
     $('nav').hide();
