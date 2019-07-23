@@ -159,15 +159,15 @@ class ControlHandler(BaseHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         if data == 'forward':
-            self.application.driver.forward():
+            self.application.driver.forward()
         elif data == 'reverse':
-            self.application.driver.reverse():
+            self.application.driver.reverse()
         elif data == 'left':
-            self.application.driver.left():
+            self.application.driver.left()
         elif data == 'right':
-            self.application.driver.right():
+            self.application.driver.right()
         elif data == 'stop':
-            self.application.driver.stop():
+            self.application.driver.stop()
         self.write(json.dumps(data))
 
 
