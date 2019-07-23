@@ -11,7 +11,7 @@ sudo apt-get install python-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-t
 
 sudo apt -y auto-remove
 
-sudo pip3 install tornado supervisor wifi psutil
+sudo pip3 install tornado supervisor wifi psutil pillow pygame RPi.GPIO
 
 # Enable thegreenbot.local
 sudo echo thegreenbot > /etc/hostname
