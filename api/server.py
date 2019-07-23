@@ -192,7 +192,7 @@ class SystemHandler(BaseHandler):
         config = get_config_file()
         sys_lines = []
         sys_lines.append('System Uptime: %s\n' % self._uptime())
-        sys_lines.append('Usage -> [CPU: %f % \t RAM: %f % ]\n' % (psutil.cpu_percent(), psutil.virtual_memory().percent))
+        sys_lines.append('CPU Usage: %.2f%% \t Memory Usage: %.2f%% ' % (psutil.cpu_percent(), psutil.virtual_memory().percent))
         sys_lines.append('Firmware Version: %s\n' % config.get('firmware', {}).get('version'))
         sys_lines.append('Last Updated: %s\n' % config.get('firmware', {}).get('last_updated'))
         sys_lines.append('$ uname: \n\t%s' % '\n\t'.join(os.uname()))
