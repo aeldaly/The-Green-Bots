@@ -43,4 +43,4 @@ sudo ifconfig wlan0 up
 sudo /etc/init.d/nginx force-reload
 sudo /etc/init.d/greenbots-api.sh force-reload
 
-sudo update-rc.d greenbots-api defaults
+sudo update-rc.d greenbots-api.sh defaults
