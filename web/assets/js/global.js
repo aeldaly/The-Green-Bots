@@ -83,7 +83,9 @@ function setupWebSocket() {
 
   wsPing.onopen = function() {
       console.log("connection was established for Ping");
-      pingServer(wsPing);
+      if (wsPing != null && wsPing.readyState === WebSocket.OPEN) {
+        wsPing.send(1)
+      }
   };
   
   wsPing.onmessage = function(evt) {
@@ -100,26 +102,18 @@ function setupWebSocket() {
       console.log('Error connecting to server!');
       $('#loadingScreen').show();
       $('nav').hide();
-      pingServer(wsPing);
+      // setTimeout(setupWebSocket, 1000);
+      
   };
 
   wsPing.onclose = function (e) {
       console.log(e);
-      console.log('Error connecting to server!');
+      console.log('Closing connection to server!');
       $('#loadingScreen').show();
       $('nav').hide();
-      pingServer(wsPing);
+      setTimeout(setupWebSocket, 1000);
   };
-}
-
-
-function pingServer(wsPing=null) {
-  if (wsPing != null && wsPing.readyState === WebSocket.OPEN) {
-    wsPing.send(1)
-  } else if (wsPing != null && wsPing.readyState === WebSocket.CLOSED) {
-    setupWebSocket();
-  }
-  setTimeout(pingServer, 10);
+  return wsPing;
 }
 
 $(document).ready(function() {
@@ -130,7 +124,10 @@ $(document).ready(function() {
   $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
   if ("WebSocket" in window) {
-    setupWebSocket();
+    var wsPing = setupWebSocket();
+    if (wsPing != null && wsPing.readyState === WebSocket.OPEN) {
+      wsPing.send(1);
+    }
   } else {
     alert("WebSocket not supported");
   }
