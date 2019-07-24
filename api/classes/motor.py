@@ -2,38 +2,45 @@ import RPi.GPIO as GPIO
 
 
 class Motor:
-    def __init__(self, pins):
+    def __init__(self, pins, frequency=20):
+        self.frequency = frequency
         GPIO.setmode(GPIO.BCM)
 
-        [forward_pin, backward_pin, control_pin] = pins
+        self.forward_pin = pins['forward']
+        self.reverse_pin = pins['reverse']
+        self.control_pin = pins['control']
 
-        GPIO.setup(forward_pin, GPIO.OUT)
-        GPIO.setup(backward_pin, GPIO.OUT)
+        GPIO.setup(self.forward_pin, GPIO.OUT)
+        GPIO.setup(self.reverse_pin, GPIO.OUT)
         GPIO.setup(self.control_pin, GPIO.OUT)
 
-        self._FREQUENCY = 20
+        self._speed = GPIO.PWM(self.control_pin, frequency)
 
-        self._forward_pwm = GPIO.PWM(forward_pin, _FREQUENCY)
-        self._backward_pwm = GPIO.PWM(backward_pin, _FREQUENCY)
-        self._speed = GPIO.PWM(self.control_pin, _FREQUENCY)
+    def _clip(self, value, minimum=0, maximum=100):
+        """Ensure value is between minimum and maximum."""
 
-    def _clip(value, minimum, maximum):
-    """Ensure value is between minimum and maximum."""
+        if value < minimum:
+            return minimum
+        elif value > maximum:
+            return maximum
+        return value
 
-    if value < minimum:
-        return minimum
-    elif value > maximum:
-        return maximum
-    return value
+    def _set_speed(self, speed):
+        self._speed.start(speed)
 
-    def move(self, speed_percent):
-        speed = _clip(abs(speed_percent), 0, 100)
+    def stop(self):
+        self._speed.start(0)
 
-        # Positive speeds move wheels forward
-        # Negative speeds move wheels backward
-        if speed_percent < 0:
-            self._backward_pwm.start(speed)
-            self._forward_pwm.start(0)
-        else:
-            self._forward_pwm.start(speed)
-            self._backward_pwm.start(0)
+    def forward(self, speed_percent=100):
+        speed = self._clip(abs(speed_percent))
+        self._set_speed(speed)
+
+        GPIO.output(self.forward_pin, GPIO.HIGH)
+        GPIO.output(self.reverse_pin, GPIO.LOW)
+
+    def reverse(self, speed_percent=100):
+        speed = self._clip(abs(speed_percent))
+        self._set_speed(speed)
+
+        GPIO.output(self.forward_pin, GPIO.LOW)
+        GPIO.output(self.reverse_pin, GPIO.HIGH)
