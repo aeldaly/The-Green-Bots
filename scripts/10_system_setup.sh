@@ -13,7 +13,7 @@ sudo apt -y auto-remove
 sudo pip3 install tornado supervisor wifi psutil pillow pygame RPi.GPIO
 
 # Enable thegreenbot.local
-sudo echo thegreenbot > /etc/hostname
+sudo -E bash -c "echo thegreenbot > /etc/hostname"
 sudo snap refresh core --edge
 sudo snap install avahi-client
 sudo snap install avahi

@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 #
 # Downloaded from:
 # http://bazaar.launchpad.net/~ubuntu-branches/ubuntu/trusty/supervisor/trusty/view/head:/debian/supervisor.init
