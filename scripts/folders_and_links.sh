@@ -7,8 +7,8 @@ sudo mkdir -p $SUPERVISOR_ROOT/logs
 
 sudo touch $GREENBOTS_ROOT/logs/events.log
 
-sudo -E bash -c "rm $GREENBOTS_ROOT/src/api"
-sudo -E bash -c "$GREENBOTS_ROOT/src/web"
+sudo -E bash -c "rm $GREENBOTS_ROOT/api"
+sudo -E bash -c "$GREENBOTS_ROOT/web"
 sudo ln -s $GREENBOTS_ROOT/src/api $GREENBOTS_ROOT
 sudo ln -s $GREENBOTS_ROOT/src/web $GREENBOTS_ROOT
 
