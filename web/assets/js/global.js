@@ -121,7 +121,7 @@ $(document).ready(function() {
           $('nav').hide();
           lastPing = null;
       };
-
+      wsPing.send(1)
   } else {
       alert("WebSocket not supported");
   }
