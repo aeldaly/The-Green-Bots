@@ -101,11 +101,10 @@ class Drive:
 
     def __init__(self):
         self.mode = GPIO.getmode()
-
-        self.IN1 = 16
-        self.IN2 = 36
-        self.IN3 = 18
-        self.IN4 = 38
+        self.IN1 = 19
+        self.IN2 = 26
+        self.IN3 = 20
+        self.IN4 = 21
 
         self.control_a = 22
         self.control_b = 40
@@ -120,7 +119,7 @@ class Drive:
         self._setup_motors()
 
     def _setup_gpio(self):
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
 
         GPIO.setup(self.IN1, GPIO.OUT)
         GPIO.setup(self.IN2, GPIO.OUT)
@@ -137,15 +136,6 @@ class Drive:
                 self.pwm_b.start(pct)
                 time.sleep(1.0/1000)
             self.duty_cycle_increased = True
-
-    def shutdown(self):
-        print('Shutting down the motors...')
-        print('Decreasing ChangeDutyCycle to 0...')
-        self.pwm_a.ChangeDutyCycle(0)
-        self.pwm_b.ChangeDutyCycle(0)
-        print('Clean up...')
-        GPIO.cleanup()
-        sys.exit(0)
 
     def stop(self):
         GPIO.output(self.IN1, GPIO.LOW)
@@ -176,18 +166,16 @@ class Drive:
     def right(self):
         print("Moving right...")
         self._setup_motors()
-        GPIO.output(self.IN1, GPIO.LOW)
-        GPIO.output(self.IN2, GPIO.HIGH)
+        GPIO.output(self.IN1, GPIO.HIGH)
+        GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.LOW)
-        # GPIO.output(self.IN4, GPIO.HIGH)
-        GPIO.output(self.IN4, GPIO.LOW)
+        GPIO.output(self.IN4, GPIO.HIGH)
 
     def left(self):
         print("Moving left...")
         self._setup_motors()
         GPIO.output(self.IN1, GPIO.LOW)
-        # GPIO.output(self.IN2, GPIO.HIGH)
-        GPIO.output(self.IN2, GPIO.LOW)
+        GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN3, GPIO.HIGH)
         GPIO.output(self.IN4, GPIO.LOW)
 
