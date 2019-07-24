@@ -221,12 +221,12 @@ class Application(web.Application):
         web.Application.__init__(self, handlers)
 
 def main(args):
-    http_api = tornado.httpserver.HTTPServer(Application(
+    app = Application(
         camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay),
         driver = Drive()
-    ))
-    http_api.listen(args.port)
-    tornado.ioloop.IOLoop.instance().start()
+    )
+    app.listen(args.port)
+    tornado.ioloop.IOLoop.current().start()
 
 
 if __name__ == "__main__":
