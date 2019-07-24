@@ -74,6 +74,8 @@ function includeHTML() {
     }
 };
 
+var lastPing = null;
+
 $(document).ready(function() {
     'use strict'
     includeHTML();
@@ -106,6 +108,10 @@ $(document).ready(function() {
             $("#loadingScreen" ).hide(); //makes page more lightweight 
             $('nav').show();
           }); 
+          if (lastPing === null) {
+            lastPing = message;
+            location.reload();
+          }
       };
 
       wsPing.onerror = function (e) {
@@ -113,6 +119,7 @@ $(document).ready(function() {
           console.log('Error connecting to server!');
           $('#loadingScreen').show();
           $('nav').hide();
+          lastPing = null;
       };
 
   } else {
