@@ -83,9 +83,8 @@ class CameraHandler(tornado.websocket.WebSocketHandler):
         self.application.camera.request_start()
 
     def on_message(self, message):
-        # jpeg_bytes = self.application.camera.get_jpeg_image_bytes()
-        # self.write_message(jpeg_bytes, binary=True)
-        self.write_message('TEST1234567890', binary=True)
+        jpeg_bytes = self.application.camera.get_jpeg_image_bytes()
+        self.write_message(jpeg_bytes, binary=True)
 
     def on_close(self):
         CameraHandler.clients.remove(self)
