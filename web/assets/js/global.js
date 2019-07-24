@@ -75,48 +75,64 @@ function includeHTML() {
     }
 };
 
+function setupWebSocket() {
+  var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
+
+  var wsPing = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/ping");
+  // ws.binaryType = 'arraybuffer';
+
+  wsPing.onopen = function() {
+      console.log("connection was established for Ping");
+      pingServer(wsPing);
+  };
+  
+  wsPing.onmessage = function(evt) {
+      var message = evt.data;
+      // console.log('Last Ping Timestamp: ' + message)
+      $("#loadingScreen").fadeOut(500, function() {
+        $("#loadingScreen" ).hide(); //makes page more lightweight 
+        $('nav').show();
+      });
+  };
+
+  wsPing.onerror = function (e) {
+      console.log(e);
+      console.log('Error connecting to server!');
+      $('#loadingScreen').show();
+      $('nav').hide();
+      pingServer(wsPing);
+  };
+
+  wsPing.onclose = function (e) {
+      console.log(e);
+      console.log('Error connecting to server!');
+      $('#loadingScreen').show();
+      $('nav').hide();
+      pingServer(wsPing);
+  };
+}
+
+
+function pingServer(wsPing=null) {
+  if (wsPing != null && wsPing.readyState === WebSocket.OPEN) {
+    wsPing.send(1)
+  } else if (wsPing != null && wsPing.readyState === WebSocket.CLOSED) {
+    setupWebSocket();
+  }
+  setTimeout(pingServer, 10);
+}
+
 $(document).ready(function() {
-    'use strict'
-    includeHTML();
+  'use strict'
+  includeHTML();
 
-    $('nav').hide();
-    $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
+  $('nav').hide();
+  $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
-    var pingInternal = 1;
-
-    function pingServer() {
-      wsPing.send(1)
-      setTimeout(pingServer, pingInternal);
-    }
-
-    if ("WebSocket" in window) {
-      var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
-
-      var wsPing = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/ping");
-      // ws.binaryType = 'arraybuffer';
-
-      wsPing.onopen = function() {
-          console.log("connection was established for Ping");
-          pingServer();
-      };
-      
-      wsPing.onmessage = function(evt) {
-          var message = evt.data;
-          // console.log('Last Ping Timestamp: ' + message)
-          $("#loadingScreen").fadeOut(500, function() {
-            $("#loadingScreen" ).hide(); //makes page more lightweight 
-            $('nav').show();
-          });
-      };
-
-      wsPing.onerror = function (e) {
-          console.log(e);
-          console.log('Error connecting to server!');
-          $('#loadingScreen').show();
-          $('nav').hide();
-      };
+  if ("WebSocket" in window) {
+    setupWebSocket();
   } else {
-      alert("WebSocket not supported");
+    alert("WebSocket not supported");
   }
 
 });
