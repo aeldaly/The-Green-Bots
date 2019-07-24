@@ -106,8 +106,8 @@ class Drive:
         self.IN3 = 20
         self.IN4 = 21
 
-        self.control_a = 22
-        self.control_b = 40
+        self.control_a = 13
+        self.control_b = 12
 
         self._setup_gpio()
 
@@ -115,8 +115,6 @@ class Drive:
         self.pwm_b = GPIO.PWM(self.control_b, 100)
 
         self.duty_cycle_increased = False
-
-        self._setup_motors()
 
     def _setup_gpio(self):
         GPIO.setmode(GPIO.BCM)
@@ -129,9 +127,9 @@ class Drive:
         GPIO.setup(self.control_a, GPIO.OUT)
         GPIO.setup(self.control_b, GPIO.OUT)
 
-    def _setup_motors(self):
+    def _setup_motors(self, dc=100):
         if self.duty_cycle_increased is False:
-            for pct in range(100):
+            for pct in range(0, dc, 5):
                 self.pwm_a.start(pct)
                 self.pwm_b.start(pct)
                 time.sleep(1.0/1000)
@@ -142,14 +140,10 @@ class Drive:
         GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.LOW)
         GPIO.output(self.IN4, GPIO.LOW)
-        print('Decreasing ChangeDutyCycle to 0...')
-        self.pwm_a.ChangeDutyCycle(0)
-        self.pwm_b.ChangeDutyCycle(0)
-        self.duty_cycle_increased = False
 
     def forward(self):
         print("Moving forward...")
-        self._setup_motors()
+        self._setup_motors(75)
         GPIO.output(self.IN1, GPIO.HIGH)
         GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.HIGH)
@@ -157,7 +151,7 @@ class Drive:
 
     def reverse(self):
         print("Moving reverse...")
-        self._setup_motors()
+        self._setup_motors(75)
         GPIO.output(self.IN1, GPIO.LOW)
         GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN3, GPIO.LOW)
@@ -165,7 +159,7 @@ class Drive:
 
     def left(self):
         print("Moving left...")
-        self._setup_motors()
+        self._setup_motors(75)
         GPIO.output(self.IN1, GPIO.HIGH)
         GPIO.output(self.IN2, GPIO.LOW)
         GPIO.output(self.IN3, GPIO.LOW)
@@ -173,7 +167,7 @@ class Drive:
 
     def right(self):
         print("Moving right...")
-        self._setup_motors()
+        self._setup_motors(75)
         GPIO.output(self.IN1, GPIO.LOW)
         GPIO.output(self.IN2, GPIO.HIGH)
         GPIO.output(self.IN3, GPIO.HIGH)
