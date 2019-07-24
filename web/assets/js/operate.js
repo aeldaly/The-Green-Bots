@@ -36,7 +36,7 @@ $(document).ready(function() {
         wsCamera.binaryType = 'arraybuffer';
 
         wsCamera.onopen = function() {
-            console.log("connection was established");
+            console.log("connection was established for Camera");
             start_time = performance.now();
             requestImage();
         };
@@ -69,7 +69,7 @@ $(document).ready(function() {
         // Drive
 
         wsDrive = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/operate/drive");
-        // ws.binaryType = 'arraybuffer';
+        
 
         wsDrive.onopen = function() {
             console.log("connection was established for Drive");

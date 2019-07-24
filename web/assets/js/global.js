@@ -7,6 +7,7 @@ function SuccessFuncAfterNavBarLoaded(){
 
   $('#systemInfoButton').click( function() {
     let sysInfo = $('#sysinfolist');
+    sysInfo.empty();
     $.getJSON(systemUrl, function (data) {
       data.forEach(function (item) {
         sysInfo.append($('<li>' + item + '</li>'));
@@ -74,20 +75,12 @@ function includeHTML() {
     }
 };
 
-var lastPing = null;
-
 $(document).ready(function() {
     'use strict'
     includeHTML();
 
-    var pingInternal = 100;
-
     $('nav').hide();
     $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
-
-    // $(window).on('load', function(){
-    //   setTimeout(pingServer, pingInternal);
-    // });
 
     var pingInternal = 1;
 
@@ -109,16 +102,11 @@ $(document).ready(function() {
       
       wsPing.onmessage = function(evt) {
           var message = evt.data;
-          console.log('Last Ping Timestamp: ' + message)
+          // console.log('Last Ping Timestamp: ' + message)
           $("#loadingScreen").fadeOut(500, function() {
-            // fadeOut complete. Remove the loading div
             $("#loadingScreen" ).hide(); //makes page more lightweight 
             $('nav').show();
-          }); 
-          if (lastPing === null) {
-            lastPing = message;
-            location.reload();
-          }
+          });
       };
 
       wsPing.onerror = function (e) {
@@ -126,7 +114,6 @@ $(document).ready(function() {
           console.log('Error connecting to server!');
           $('#loadingScreen').show();
           $('nav').hide();
-          lastPing = null;
       };
   } else {
       alert("WebSocket not supported");
