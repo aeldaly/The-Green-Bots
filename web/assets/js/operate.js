@@ -11,15 +11,15 @@ var time_smoothing = 0.9; // larger=more smoothing
 var request_time_smoothing = 0.2; // larger=more smoothing
 var target_time = 1000 / target_fps;
 
-var ws;
+var wsCamera;
+var wsDrive;
 
 function requestImage() {
     request_start_time = performance.now();
-    ws.send(1);
+    wsCamera.send(1);
 }
 
 
-var controlSignal;
 $(document).ready(function() {
     'use strict'
 
@@ -126,10 +126,6 @@ $(document).ready(function() {
         if (controlKey != null){
             sendControlData(controlKey);
         }
-    }
-    controlSignal = function (key) {
-        console.log(key)
-        sendControlData(key);
     }
 
     // window.addEventListener('resize', resizeCanvas, false);
