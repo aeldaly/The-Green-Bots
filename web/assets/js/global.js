@@ -1,6 +1,5 @@
 var serverURL = "http://thegreenbot.local";
 // var serverURL = "http://localhost:8000";
-const pingServerUrl = serverURL + '/api/ping';
 const systemUrl = serverURL + '/api/system';
 
 
@@ -75,7 +74,6 @@ function includeHTML() {
     }
 };
 
-
 $(document).ready(function() {
     'use strict'
     includeHTML();
@@ -88,27 +86,43 @@ $(document).ready(function() {
     $(window).on('load', function(){
       setTimeout(pingServer, pingInternal);
     });
-    
+
+
+    if ("WebSocket" in window) {
+      var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
+
+      var wsPing = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/ping");
+      // ws.binaryType = 'arraybuffer';
+
+      wsPing.onopen = function() {
+          console.log("connection was established for Ping");
+      };
+      
+      wsPing.onmessage = function(evt) {
+          var message = evt.data;
+          console.log('Last Ping Timestamp: ' + message)
+          $("#loadingScreen").fadeOut(500, function() {
+            // fadeOut complete. Remove the loading div
+            $("#loadingScreen" ).hide(); //makes page more lightweight 
+            $('nav').show();
+          }); 
+      };
+
+      wsPing.onerror = function (e) {
+          console.log(e);
+          console.log('Error connecting to server!');
+          $('#loadingScreen').show();
+          $('nav').hide();
+      };
+
+  } else {
+      alert("WebSocket not supported");
+  }
+    var pingInternal = 1;
+
     function pingServer() {
-      $.ajax({
-          url: pingServerUrl + "?t=" + new Date().getTime(),
-          type: 'get',
-          cache: false,
-          success: function(data){
-            $("#loadingScreen").fadeOut(500, function() {
-              // fadeOut complete. Remove the loading div
-              $("#loadingScreen" ).hide(); //makes page more lightweight 
-              $('nav').show();
-            }); 
-            setTimeout(pingServer, pingInternal);
-          },
-          error: function(){
-              console.log('Error connecting to server!');
-              $('#loadingScreen').show();
-              $('nav').hide();
-              setTimeout(pingServer, pingInternal);
-          }
-      });
+      wsPing.send(1)
+      setTimeout(pingServer, pingInternal);
     }
     pingServer();
 });

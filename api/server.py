@@ -2,6 +2,7 @@ import argparse
 import json
 import os.path
 import subprocess
+import time
 from datetime import datetime
 
 import netifaces
@@ -152,9 +153,24 @@ class UpdateHandler(BaseHandler):
         restart_supervisord()
 
 
-class PingHandler(BaseHandler):
-    def get(self):
-        self.write(json.dumps(True))
+class PingHandler(tornado.websocket.WebSocketHandler):
+    clients = set()
+
+    def check_origin(self, origin):
+        # Allow access from every origin
+        return True
+
+    def open(self):
+        PingHandler.clients.add(self)
+        print("WebSocket opened from: " + self.request.remote_ip)
+        
+
+    def on_message(self, message):
+        self.write_message(int(time.time() * 1000))
+
+    def on_close(self):
+        PingHandler.clients.remove(self)
+        print("WebSocket closed from: " + self.request.remote_ip)
 
 
 class LogHandler(BaseHandler):
