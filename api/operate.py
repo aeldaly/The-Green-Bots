@@ -195,6 +195,37 @@ class ControlHandler(BaseHandler):
             self.application.driver.stop()
         self.write(json.dumps(data))
 
+class DriveHandler(tornado.websocket.WebSocketHandler):
+    clients = set()
+
+    def check_origin(self, origin):
+        # Allow access from every origin
+        return True
+
+    def open(self):
+        DriveHandler.clients.add(self)
+    #     print("WebSocket opened from: " + self.request.remote_ip)
+    #     self.application.camera.request_start()
+
+    def on_message(self, message):
+        print('Receiveed msg from Driver Websocket: %s' % message)
+        if message == 'forward':
+            self.application.driver.forward()
+        elif message == 'reverse':
+            self.application.driver.reverse()
+        elif message == 'left':
+            self.application.driver.left()
+        elif message == 'right':
+            self.application.driver.right()
+        elif message == 'stop':
+            self.application.driver.stop()
+        self.write_message(json.dumps(message))
+
+    def on_close(self):
+        DriveHandler.clients.remove(self)
+        print("WebSocket closed from: " + self.request.remote_ip)
+        if len(DriveHandler.clients) == 0:
+            self.application.driver.stop()
 
 
 class Application(web.Application):
@@ -204,6 +235,7 @@ class Application(web.Application):
         handlers = [
             (r"/api/operate/camera", CameraHandler),
             (r"/api/operate/control", ControlHandler),
+            (r"/api/operate/drive", DriveHandler),
         ]
         web.Application.__init__(self, handlers)
 
