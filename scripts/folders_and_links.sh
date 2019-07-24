@@ -21,3 +21,5 @@ sudo -E bash -c "ln -s $GREENBOTS_ROOT/src/configs/init_scripts/greenbots-api.sh
 
 sudo rm /etc/nginx/nginx.conf
 sudo -E bash -c "ruby $GREENBOTS_ROOT/src/configs/nginx/nginx.rb"
+
+sudo -E bash -c "ln -s $GREENBOTS_ROOT/src/configs/init_scripts/rc3.d-videocard /etc/rc3.d/S02v4l2-ctl"
