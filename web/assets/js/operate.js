@@ -30,15 +30,8 @@ $(document).ready(function() {
 
 
     var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
-    var path = location.pathname;
-    if(path.endsWith("operate.html"))
-    {
-        path = path.substring(0, path.length - "operate.html".length);
-    }
-    if(!path.endsWith("/")) {
-        path = path + "/";
-    }
-    ws = new WebSocket(wsProtocol + location.host + path + "/api/operate/camera");
+
+    ws = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/operate/camera");
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = function() {
@@ -51,7 +44,6 @@ $(document).ready(function() {
         var arrayBuffer = evt.data;
         var blob  = new Blob([new Uint8Array(arrayBuffer)], {type: "image/jpeg"});
         img.src = window.URL.createObjectURL(blob);
-    
         var end_time = performance.now();
         var current_time = end_time - start_time;
         // smooth with moving average
