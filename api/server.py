@@ -10,6 +10,7 @@ from wifi import Cell, Scheme
 
 import tornado.httpserver
 import tornado.ioloop
+import tornado.websocket
 from tornado import web
 from tornado.options import define, options
 from datetime import timedelta
