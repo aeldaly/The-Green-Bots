@@ -15,7 +15,7 @@ var ws;
 
 function requestImage() {
     request_start_time = performance.now();
-    ws.send('more');
+    ws.send(1);
 }
 
 
@@ -28,37 +28,45 @@ $(document).ready(function() {
     const cameraURL = serverURL + "/api/operate/camera";
     const controlURL = serverURL + "/api/operate/control";
 
+    if ("WebSocket" in window) {
+        var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
 
-    var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
+        ws = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/operate/camera");
+        ws.binaryType = 'arraybuffer';
 
-    ws = new WebSocket(wsProtocol + "thegreenbot.local" + "/api/operate/camera");
-    ws.binaryType = 'arraybuffer';
+        ws.onopen = function() {
+            console.log("connection was established");
+            start_time = performance.now();
+            requestImage();
+        };
+        
+        ws.onmessage = function(evt) {
+            var arrayBuffer = evt.data;
+            var blob  = new Blob([new Uint8Array(arrayBuffer)], {type: "image/jpeg"});
+            img.src = window.URL.createObjectURL(blob);
+            var end_time = performance.now();
+            var current_time = end_time - start_time;
+            // smooth with moving average
+            time = (time * time_smoothing) + (current_time * (1.0 - time_smoothing));
+            start_time = end_time;
+            var fps = Math.round(1000 / time);
+            fpsText.textContent = fps;
+        
+            var current_request_time = performance.now() - request_start_time;
+            // smooth with moving average
+            request_time = (request_time * request_time_smoothing) + (current_request_time * (1.0 - request_time_smoothing));
+            var timeout = Math.max(0, target_time - request_time);
+        
+            setTimeout(requestImage, timeout);
+        };
 
-    ws.onopen = function() {
-        console.log("connection was established");
-        start_time = performance.now();
-        requestImage();
-    };
-    
-    ws.onmessage = function(evt) {
-        var arrayBuffer = evt.data;
-        var blob  = new Blob([new Uint8Array(arrayBuffer)], {type: "image/jpeg"});
-        img.src = window.URL.createObjectURL(blob);
-        var end_time = performance.now();
-        var current_time = end_time - start_time;
-        // smooth with moving average
-        time = (time * time_smoothing) + (current_time * (1.0 - time_smoothing));
-        start_time = end_time;
-        var fps = Math.round(1000 / time);
-        fpsText.textContent = fps;
-    
-        var current_request_time = performance.now() - request_start_time;
-        // smooth with moving average
-        request_time = (request_time * request_time_smoothing) + (current_request_time * (1.0 - request_time_smoothing));
-        var timeout = Math.max(0, target_time - request_time);
-    
-        setTimeout(requestImage, timeout);
-    };
+        ws.onerror = function (e) {
+            console.log(e);
+            ws.send(1);
+        };
+    } else {
+        alert("WebSocket not supported");
+    }
     // const refreshInterval = 1;
 
     // function timedRefresh() {
