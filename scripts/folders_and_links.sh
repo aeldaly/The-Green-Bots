@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo mkdir -p $GREENBOTS_ROOT
 sudo mkdir -p $GREENBOTS_ROOT/logs

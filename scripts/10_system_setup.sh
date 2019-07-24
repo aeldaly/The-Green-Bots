@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo apt update
 sudo apt -y upgrade
 
-sudo apt -y install nginx python3-pip wireless-tools pkg-config
-
-# Pygame Dependencies
-sudo apt-get install python-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev libsmpeg-dev python-numpy subversion libportmidi-dev ffmpeg libswscale-dev libavformat-dev libavcodec-dev
+sudo apt -y install nginx python3-pip wireless-tools pkg-config python-dev \
+    libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl1.2-dev \
+    libsmpeg-dev python-numpy subversion libportmidi-dev ffmpeg \
+    libswscale-dev libavformat-dev libavcodec-dev
 
 sudo apt -y auto-remove
 

@@ -1,5 +1,4 @@
-# this is the only file that is included automatically in bashrc
-# so we're using it for all setup
+#!/usr/bin/env bash
 
 shopt -s expand_aliases
 
