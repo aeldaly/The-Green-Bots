@@ -204,7 +204,7 @@ class DriveHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         DriveHandler.clients.add(self)
-    #     print("WebSocket opened from: " + self.request.remote_ip)
+        print("WebSocket opened from: " + self.request.remote_ip)
     #     self.application.camera.request_start()
 
     def on_message(self, message):
@@ -237,7 +237,7 @@ class Application(web.Application):
             (r"/api/operate/control", ControlHandler),
             (r"/api/operate/drive", DriveHandler),
         ]
-        web.Application.__init__(self, handlers)
+        web.Application.__init__(self, handlers, debug=True)
 
 def main(args):
     app = Application(

@@ -45,7 +45,7 @@ class Application(web.Application):
             (r"/api/update", UpdateHandler),
             (r"/api/ping", PingHandler)
         ]
-        web.Application.__init__(self, handlers)
+        web.Application.__init__(self, handlers, debug=True)
 
 
 class BaseHandler(web.RequestHandler):
