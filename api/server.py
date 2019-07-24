@@ -41,7 +41,7 @@ class Application(web.Application):
             (r"/api/wifi", WifiHandler),
             (r"/api/logs", LogHandler),
             (r"/api/events", EventHandler),
-            (r"/api/intelligence", IntelligenceHandler),
+            # (r"/api/intelligence", IntelligenceHandler),
             (r"/api/update", UpdateHandler),
             (r"/api/ping", PingHandler)
         ]
@@ -165,7 +165,6 @@ class PingHandler(tornado.websocket.WebSocketHandler):
         PingHandler.clients.add(self)
         print("WebSocket opened from: " + self.request.remote_ip)
         
-
     def on_message(self, message):
         self.write_message(int(time.time() * 1000))
 
