@@ -166,7 +166,7 @@ class PingHandler(tornado.websocket.WebSocketHandler):
         print("WebSocket opened from: " + self.request.remote_ip)
         
     def on_message(self, message):
-        self.write_message(int(time.time() * 1000))
+        self.write_message(str(int(time.time() * 1000)))
 
     def on_close(self):
         PingHandler.clients.remove(self)

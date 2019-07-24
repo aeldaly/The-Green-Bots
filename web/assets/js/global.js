@@ -85,10 +85,16 @@ $(document).ready(function() {
     $('nav').hide();
     $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
-    $(window).on('load', function(){
-      setTimeout(pingServer, pingInternal);
-    });
+    // $(window).on('load', function(){
+    //   setTimeout(pingServer, pingInternal);
+    // });
 
+    var pingInternal = 1;
+
+    function pingServer() {
+      wsPing.send(1)
+      setTimeout(pingServer, pingInternal);
+    }
 
     if ("WebSocket" in window) {
       var wsProtocol = (location.protocol === "https:") ? "wss://" : "ws://";
@@ -98,6 +104,7 @@ $(document).ready(function() {
 
       wsPing.onopen = function() {
           console.log("connection was established for Ping");
+          pingServer();
       };
       
       wsPing.onmessage = function(evt) {
@@ -121,15 +128,8 @@ $(document).ready(function() {
           $('nav').hide();
           lastPing = null;
       };
-      wsPing.send(1)
   } else {
       alert("WebSocket not supported");
   }
-    var pingInternal = 1;
 
-    function pingServer() {
-      wsPing.send(1)
-      setTimeout(pingServer, pingInternal);
-    }
-    pingServer();
 });
