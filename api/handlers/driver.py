@@ -16,16 +16,17 @@ class DriverHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         print('Receiveed msg from Driver Websocket: %s' % message)
         if message == 'forward':
-            self.application.driver.forward()
+            state = self.application.driver.forward()
         elif message == 'reverse':
-            self.application.driver.reverse()
+            state = self.application.driver.reverse()
         elif message == 'left':
-            self.application.driver.left()
+            state = self.application.driver.left()
         elif message == 'right':
-            self.application.driver.right()
+            state = self.application.driver.right()
         elif message == 'stop':
-            self.application.driver.stop()
-        self.write_message(json.dumps(message))
+            state = self.application.driver.stop()
+
+        self.write_message(json.dumps(state))
 
     def on_close(self):
         DriverHandler.clients.remove(self)

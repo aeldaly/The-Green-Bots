@@ -38,9 +38,13 @@ class Motor:
         GPIO.output(self.forward_pin, GPIO.HIGH)
         GPIO.output(self.reverse_pin, GPIO.LOW)
 
+        return speed
+
     def reverse(self, speed_percent=100):
         speed = self._clip(abs(speed_percent))
         self._set_speed(speed)
 
         GPIO.output(self.forward_pin, GPIO.LOW)
         GPIO.output(self.reverse_pin, GPIO.HIGH)
+
+        return speed
