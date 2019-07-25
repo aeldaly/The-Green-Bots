@@ -18,8 +18,8 @@ class Driver:
         self.stop()
 
     def _current_direction(self):
-        ml = self._state['left_speed']
-        mr = self._state['right_speed']
+        ml = self._state['left_motor_speed']
+        mr = self._state['right_motor_speed']
 
         return self.direction_resolver.resolve(ml, mr)
 
@@ -28,10 +28,10 @@ class Driver:
         self._set_state(speeds['left_motor_speed'],
                         speeds['right_motor_speed'])
 
-    def _set_state(self, left_speed, right_speed):
+    def _set_state(self, left_motor_speed, right_motor_speed):
         self._state = {
-            'left_speed': left_speed,
-            'right_speed': right_speed
+            'left_motor_speed': left_motor_speed,
+            'right_motor_speed': right_motor_speed
         }
 
         self._state['current_direction'] = self._current_direction()
@@ -74,8 +74,8 @@ class Driver:
     #     angular = message.angular.z
 
     #     # Calculate wheel speeds in m/s
-    #     left_speed = linear - angular*self._wheel_base/2
-    #     right_speed = linear + angular*self._wheel_base/2
+    #     left_motor_speed = linear - angular*self._wheel_base/2
+    #     right_motor_speed = linear + angular*self._wheel_base/2
 
     #     # Ideally we'd now use the desired wheel speeds along
     #     # with data from wheel speed sensors to come up with the
@@ -83,8 +83,8 @@ class Driver:
     #     # wheel speed sensors. Instead, we'll simply convert m/s
     #     # into percent of maximum wheel speed, which gives us a
     #     # duty cycle that we can apply to each motor.
-    #     self._left_speed_percent = (100 * left_speed/self._max_speed)
-    #     self._right_speed_percent = (100 * right_speed/self._max_speed)
+    #     self._left_motor_speed_percent = (100 * left_motor_speed/self._max_speed)
+    #     self._right_motor_speed_percent = (100 * right_motor_speed/self._max_speed)
 
     # def run(self):
     #     """The control loop of the driver."""
@@ -97,8 +97,8 @@ class Driver:
     #         # moving
     #         delay = rospy.get_time() - self._last_received
     #         if delay < self._timeout:
-    #             self._left_motor.move(self._left_speed_percent)
-    #             self._right_motor.move(self._right_speed_percent)
+    #             self._left_motor.move(self._left_motor_speed_percent)
+    #             self._right_motor.move(self._right_motor_speed_percent)
     #         else:
     #             self._left_motor.move(0)
     #             self._right_motor.move(0)

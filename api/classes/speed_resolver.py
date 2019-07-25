@@ -130,8 +130,8 @@ class SpeedResolver:
     def resolve(self, state, target_action):
         self._target_action = target_action
         current_direction = state['current_direction']
-        self.ml = state['left_motor']
-        self.ml = state['right_motor']
+        self.ml = state['left_motor_speed']
+        self.ml = state['right_motor_speed']
 
         if current_direction == constants.DIRECTION_FORWARD:
             self._resolve_forward_direction()
