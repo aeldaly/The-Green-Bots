@@ -1,14 +1,11 @@
+from . import constants
 from .motor import Motor
 from .direction_resolver import DirectionResolver
 from .speed_resolver import SpeedResolver
 
+
 class Driver:
     _SPEED_INCREMENT = 10
-
-    _TARGET_ACTION_FORWARD = 'F'
-    _TARGET_ACTION_REVERSE = 'Rv'
-    _TARGET_ACTION_LEFT = 'L'
-    _TARGET_ACTION_RIGHT = 'R'
 
     def __init__(self, left_motor_pins, right_motor_pins):
         # Assign pins to motors.
@@ -17,7 +14,7 @@ class Driver:
 
         self.direction_resolver = DirectionResolver()
         self.speed_resolver = SpeedResolver(Driver._SPEED_INCREMENT)
-        
+
         self.stop()
 
     def _current_direction(self):
@@ -28,8 +25,9 @@ class Driver:
 
     def _set_speed(self, target_action):
         speeds = self.speed_resolver.resolve(self._state, target_action)
-        self._set_state(speeds['left_motor_speed'], speeds['right_motor_speed'])
-        
+        self._set_state(speeds['left_motor_speed'],
+                        speeds['right_motor_speed'])
+
     def _set_state(self, left_speed, right_speed):
         self._state = {
             'left_speed': left_speed,
@@ -47,22 +45,22 @@ class Driver:
         return self._set_state(0, 0)
 
     def forward(self):
-        self._set_speed(Driver._TARGET_ACTION_FORWARD)
+        self._set_speed(constants.TARGET_ACTION_FORWARD)
 
         return self._state
 
     def reverse(self):
-        self._set_speed(Driver._TARGET_ACTION_REVERSE)
+        self._set_speed(constants.TARGET_ACTION_REVERSE)
 
         return self._state
 
     def left(self):
-        self._set_speed(Driver._TARGET_ACTION_LEFT)
+        self._set_speed(constants.TARGET_ACTION_LEFT)
 
         return self._state
 
     def right(self):
-        self._set_speed(Driver._TARGET_ACTION_RIGHT)
+        self._set_speed(constants.TARGET_ACTION_RIGHT)
 
         return self._state
 

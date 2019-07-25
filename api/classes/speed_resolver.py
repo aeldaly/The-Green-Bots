@@ -1,11 +1,9 @@
-from .direction_resolver import DirectionResolver
-from .driver import Driver
+from . import constants
+
 
 class SpeedResolver:
     def __init__(self, speed_increment):
         self._speed_increment = speed_increment
-        self.ml_speed = ml_speed
-        self.mr_speed = mr_speed
 
     def _increase_forward_speed(self):
         self.ml_speed += self._speed_increment
@@ -50,81 +48,81 @@ class SpeedResolver:
         self.mr_speed = self._speed_increment
 
     def _resolve_forward_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._increase_forward_speed()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._decrease_forward_speed()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._increase_right_speed()
         else:
             self._increase_left_speed()
 
     def _resolve_forward_right_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._equalise_speed()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._reverse()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._increase_left_speed()
         else:
             self._increase_right_speed()
 
     def _resolve_forward_left_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._equalise_speed()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._reverse()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._increase_left_speed()
         else:
             self._increase_right_speed()
 
     def _resolve_right_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._move_forward()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._reverse()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._move_forward_left()
         else:
             self._move_forward_right()
 
     def _resolve_left_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._move_forward()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._reverse()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._move_forward_left()
         else:
             self._move_forward_right()
 
     def _resolve_reverse_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._move_forward()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._decrease_forward_speed()
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._decrease_right_speed()
         else:
             self._decrease_left_speed()
 
     def _resolve_reverse_right_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._move_forward()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._equalise_speed('min')
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._decrease_right_speed()
         else:
             self._decrease_left_speed()
 
     def _resolve_reverse_left_direction(self):
-        if self._target_action == Driver._TARGET_ACTION_FORWARD:
+        if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._move_forward()
-        elif self._target_action == Driver._TARGET_ACTION_REVERSE:
+        elif self._target_action == constants.TARGET_ACTION_REVERSE:
             self._equalise_speed('min')
-        elif self._target_action == Driver._TARGET_ACTION_LEFT:
+        elif self._target_action == constants.TARGET_ACTION_LEFT:
             self._decrease_left_speed()
         else:
             self._decrease_right_speed()
@@ -135,19 +133,19 @@ class SpeedResolver:
         self.ml = state['left_motor']
         self.ml = state['right_motor']
 
-        if current_direction == DirectionResolver._FORWARD_DIRECTION:
+        if current_direction == constants.DIRECTION_FORWARD:
             self._resolve_forward_direction()
-        elif current_direction == DirectionResolver._FORWARD_RIGHT_DIRECTION:
+        elif current_direction == constants.DIRECTION_FORWARD_RIGHT:
             self._resolve_forward_right_direction()
-        elif current_direction == DirectionResolver._FORWARD_LEFT_DIRECTION:
+        elif current_direction == constants.DIRECTION_FORWARD_LEFT:
             self._resolve_forward_left_direction()
-        elif current_direction == DirectionResolver._REVERSE_DIRECTION:
+        elif current_direction == constants.DIRECTION_REVERSE:
             self._resolve_reverse_direction()
-        elif current_direction == DirectionResolver._REVERSE_RIGHT_DIRECTION:
+        elif current_direction == constants.DIRECTION_REVERSE_RIGHT:
             self._resolve_reverse_right_direction()
-        elif current_direction == DirectionResolver._REVERSE_LEFT_DIRECTION:
+        elif current_direction == constants.DIRECTION_REVERSE_LEFT:
             self._resolve_reverse_left_direction()
-        elif current_direction == DirectionResolver._RIGHT_DIRECTION:
+        elif current_direction == constants.DIRECTION_RIGHT:
             self._resolve_right_direction()
         else:
             self._resolve_left_direction()

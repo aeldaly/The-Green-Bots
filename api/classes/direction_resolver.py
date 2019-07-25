@@ -1,17 +1,7 @@
+from .constants import *
 
 
 class DirectionResolver:
-    _FORWARD_DIRECTION = 'F'
-    _FORWARD_RIGHT_DIRECTION = 'FR'
-    _FORWARD_LEFT_DIRECTION = 'FL'
-    
-    _REVERSE_DIRECTION = 'Rv'
-    _REVERSE_RIGHT_DIRECTION = 'RvR'
-    _REVERSE_LEFT_DIRECTION = 'RvL'
-
-    _RIGHT_DIRECTION = 'R'
-    _LEFT_DIRECTION = 'L'
-
     def __init__(self):
         self._ml_speed = 0
         self._mr_speed = 0
@@ -19,26 +9,26 @@ class DirectionResolver:
     def _resolve_forward_direction(self):
         diff = self._ml_speed - self._mr_speed
         if diff == 0:
-            self.direction = DirectionResolver._FORWARD_DIRECTION   
+            self.direction = DIRECTION_FORWARD
         elif diff < 0:
-            self.direction = DirectionResolver._FORWARD_LEFT_DIRECTION
+            self.direction = DIRECTION_FORWARD_LEFT
         else:
-            self.direction = DirectionResolver._FORWARD_RIGHT_DIRECTION
+            self.direction = DIRECTION_FORWARD_RIGHT
 
     def _resolve_reverse_direction(self):
         diff = self._ml_speed - self._mr_speed
         if diff == 0:
-            self.direction = DirectionResolver._REVERSE_DIRECTION
+            self.direction = DIRECTION_REVERSE
         elif diff < 0:
-            self.direction = DirectionResolver._REVERSE_LEFT_DIRECTION
+            self.direction = DIRECTION_REVERSE_LEFT
         else:
-            self.direction = DirectionResolver._REVERSE_RIGHT_DIRECTION
+            self.direction = DIRECTION_REVERSE_RIGHT
 
     def _resolve_in_place_direction(self):
         if self._ml_speed < 0:
-            self.direction = DirectionResolver._LEFT_DIRECTION
+            self.direction = DIRECTION_LEFT
         else:
-            self.direction = DirectionResolver._RIGHT_DIRECTION
+            self.direction = DIRECTION_RIGHT
 
     def resolve(self, motor_left_speed, motor_right_speed):
         self._ml_speed = motor_left_speed
