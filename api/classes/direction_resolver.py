@@ -30,6 +30,17 @@ class DirectionResolver:
         else:
             self.direction = constants.DIRECTION_RIGHT
 
+    def _is_forward_direction(self):
+        return (self._ml_speed > 0 and self._mr_speed > 0) or \
+        (self._ml_speed > 0 and self._mr_speed == 0) or \
+        (self._ml_speed == 0 and self._mr_speed > 0)
+
+    def is_reverse_direction(self):
+        return (self._ml_speed < 0 and self._mr_speed < 0) or \
+        (self._ml_speed < 0 and self._mr_speed == 0) or \
+        (self._ml_speed == 0 and self._mr_speed < 0)
+
+
     def resolve(self, motor_left_speed, motor_right_speed):
         self._ml_speed = motor_left_speed
         self._mr_speed = motor_right_speed
@@ -38,9 +49,9 @@ class DirectionResolver:
             self.direction = constants.DIRECTION_NONE
             return self.direction
 
-        if self._ml_speed > 0 and self._mr_speed > 0:
+        if self._is_forward_direction():
             self._resolve_forward_direction()
-        elif self._ml_speed < 0 and self._mr_speed < 0:
+        elif self.is_reverse_direction():
             self._resolve_reverse_direction()
         else:
             self._resolve_in_place_direction()
