@@ -25,11 +25,11 @@ def test_reverse():
 
 
 def test_reverse_right():
-    expect(DirectionResolver().resolve(-50, -70)).to(equal('RvR'))
+    expect(DirectionResolver().resolve(-70, -50)).to(equal('RvR'))
 
 
 def test_reverse_left():
-    expect(DirectionResolver().resolve(-70, -50)).to(equal('RvL'))
+    expect(DirectionResolver().resolve(-50, -70)).to(equal('RvL'))
 
 
 def test_right():
@@ -38,3 +38,7 @@ def test_right():
 
 def test_left():
     expect(DirectionResolver().resolve(-50, 50)).to(equal('L'))
+
+
+def test_stop():
+    expect(DirectionResolver().resolve(0, 0)).to(equal('S'))
