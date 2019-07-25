@@ -131,12 +131,12 @@ class SpeedResolver:
         self.right_motor_speed = self._speed_increment
 
     def _move_inplace_left(self):
-        self.left_motor_speed = self._speed_increment
-        self.right_motor_speed = - 1 * self._speed_increment
-
-    def _move_inplace_right(self):
         self.left_motor_speed = -1 * self._speed_increment
         self.right_motor_speed = self._speed_increment
+
+    def _move_inplace_right(self):
+        self.left_motor_speed = self._speed_increment
+        self.right_motor_speed = -1 * self._speed_increment
 
     def _resolve_forward_direction(self):
         if self._target_action == constants.TARGET_ACTION_FORWARD:
