@@ -23,8 +23,14 @@ class Driver:
 
     def _set_speed(self, target_action):
         speeds = self.speed_resolver.resolve(self._state, target_action)
-        self._set_state(speeds['left_motor_speed'],
-                        speeds['right_motor_speed'])
+
+        left_motor_speed = speeds['left_motor_speed']
+        right_motor_speed = speeds['right_motor_speed']
+
+        self._set_state(left_motor_speed, right_motor_speed)
+
+        self._left_motor.speed(left_motor_speed)
+        self._right_motor.speed(right_motor_speed)
 
     def _set_state(self, left_motor_speed, right_motor_speed):
         self._state = {
