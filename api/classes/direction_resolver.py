@@ -19,7 +19,7 @@ class DirectionResolver:
         diff = self._ml_speed - self._mr_speed
         if diff == 0:
             self.direction = constants.DIRECTION_REVERSE
-        elif diff < 0:
+        elif diff > 0:
             self.direction = constants.DIRECTION_REVERSE_LEFT
         else:
             self.direction = constants.DIRECTION_REVERSE_RIGHT
