@@ -39,36 +39,28 @@ class SpeedResolver:
 
     # motor commands
     def _forward_increase_right_motor(self):
-        self.right_motor_speed = ForwardMotorCommands.increase_speed(
-            self.right_motor_speed)
+        self.right_motor_speed = ForwardMotorCommands.increase_speed(self.right_motor_speed)
 
     def _forward_decrease_right_motor(self):
-        self.right_motor_speed = ForwardMotorCommands.decrease_speed(
-            self.right_motor_speed)
+        self.right_motor_speed = ForwardMotorCommands.decrease_speed(self.right_motor_speed)
 
     def _forward_increase_left_motor(self):
-        self.left_motor_speed = ForwardMotorCommands.increase_speed(
-            self.left_motor_speed)
+        self.left_motor_speed = ForwardMotorCommands.increase_speed(self.left_motor_speed)
 
     def _forward_decrease_left_motor(self):
-        self.left_motor_speed = ForwardMotorCommands.decrease_speed(
-            self.left_motor_speed)
+        self.left_motor_speed = ForwardMotorCommands.decrease_speed(self.left_motor_speed)
 
     def _reverse_increase_right_motor(self):
-        self.right_motor_speed = ReverseMotorCommands.increase_speed(
-            self.right_motor_speed)
+        self.right_motor_speed = ReverseMotorCommands.increase_speed(self.right_motor_speed)
 
     def _reverse_decrease_right_motor(self):
-        self.right_motor_speed = ReverseMotorCommands.decrease_speed(
-            self.right_motor_speed)
+        self.right_motor_speed = ReverseMotorCommands.decrease_speed(self.right_motor_speed)
 
     def _reverse_increase_left_motor(self):
-        self.left_motor_speed = ReverseMotorCommands.increase_speed(
-            self.left_motor_speed)
+        self.left_motor_speed = ReverseMotorCommands.increase_speed(self.left_motor_speed)
 
     def _reverse_decrease_left_motor(self):
-        self.left_motor_speed = ReverseMotorCommands.decrease_speed(
-            self.left_motor_speed)
+        self.left_motor_speed = ReverseMotorCommands.decrease_speed(self.left_motor_speed)
 
     # relative drive commands
     def _increase_forward_speed(self):

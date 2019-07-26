@@ -4,13 +4,14 @@ import sys
 
 parent = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent)
-
-from classes import constants
 from classes.speed_resolver import SpeedResolver
+from classes import constants
+
 
 ################################################
-######### FORWARD
+# FORWARD
 ################################################
+
 def test_direction_forward_to_forward():
     state = {
         'current_direction': constants.DIRECTION_FORWARD,
@@ -21,6 +22,7 @@ def test_direction_forward_to_forward():
         'left_motor_speed': 60,
         'right_motor_speed': 60
     }))
+
 
 def test_direction_forward_to_reverse():
     state = {
@@ -33,6 +35,7 @@ def test_direction_forward_to_reverse():
         'right_motor_speed': 40
     }))
 
+
 def test_direction_forward_to_right():
     state = {
         'current_direction': constants.DIRECTION_FORWARD,
@@ -43,6 +46,7 @@ def test_direction_forward_to_right():
         'left_motor_speed': 60,
         'right_motor_speed': 40
     }))
+
 
 def test_direction_forward_to_left():
     state = {
@@ -56,8 +60,10 @@ def test_direction_forward_to_left():
     }))
 
 ################################################
-######### REVERSE
+# REVERSE
 ################################################
+
+
 def test_direction_reverse_to_forward():
     state = {
         'current_direction': constants.DIRECTION_REVERSE,
@@ -106,7 +112,7 @@ def test_direction_reverse_to_left():
     }))
 
 ################################################
-######### RIGHT
+# RIGHT
 ################################################
 
 
@@ -158,8 +164,10 @@ def test_direction_right_to_left():
     }))
 
 ################################################
-######### LEFT
+# LEFT
 ################################################
+
+
 def test_direction_left_to_forward():
     state = {
         'current_direction': constants.DIRECTION_LEFT,
@@ -210,7 +218,7 @@ def test_direction_left_to_left():
     }))
 
 ################################################
-######### FORWARD RIGHT
+# FORWARD RIGHT
 ################################################
 
 
@@ -264,7 +272,7 @@ def test_direction_forward_right_to_left():
     }))
 
 ################################################
-######### FORWARD LEFT
+# FORWARD LEFT
 ################################################
 
 
@@ -317,7 +325,7 @@ def test_direction_forward_left_to_left():
     }))
 
 ################################################
-######### REVERSE LEFT
+# REVERSE LEFT
 ################################################
 
 
@@ -369,7 +377,7 @@ def test_direction_reverse_left_to_left():
     }))
 
 ################################################
-######### REVERSE RIGHT
+# REVERSE RIGHT
 ################################################
 
 
