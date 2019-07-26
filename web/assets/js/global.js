@@ -102,7 +102,6 @@ function setupWebSocket() {
       console.log('Error connecting to server!');
       $('#loadingScreen').show();
       $('nav').hide();
-      // setTimeout(setupWebSocket, 1000);
   };
 
   wsPing.onclose = function (e) {
@@ -114,7 +113,7 @@ function setupWebSocket() {
   };
   return wsPing;
 }
-
+var wsPing;
 $(document).ready(function() {
   'use strict'
   includeHTML();
@@ -123,7 +122,7 @@ $(document).ready(function() {
   $('body').append('<div style="" class="loading text-center" id="loadingScreen">This page will referesh once the robot becomes online again...</div>');
 
   if ("WebSocket" in window) {
-    var wsPing = setupWebSocket();
+    wsPing = setupWebSocket();
     if (wsPing != null && wsPing.readyState === WebSocket.OPEN) {
       wsPing.send(1);
     }
