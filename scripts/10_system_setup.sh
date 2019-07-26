@@ -28,6 +28,8 @@ git pull
 sudo cp configs/bash/bash_aliases /etc/profile.d/bash_aliases.sh
 source /etc/profile
 
+sudo pip3 install -r $GREENBOTS_ROOT/src/requirements.txt
+
 $GREENBOTS_ROOT/src/scripts/folders_and_links.sh
 
 # Need to have www-data to be able to run sudo commands
