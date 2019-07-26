@@ -103,7 +103,6 @@ function setupWebSocket() {
       $('#loadingScreen').show();
       $('nav').hide();
       // setTimeout(setupWebSocket, 1000);
-      
   };
 
   wsPing.onclose = function (e) {
