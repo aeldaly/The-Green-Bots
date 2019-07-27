@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from ..utils.clip import _clip
+from api.utils.clip import _clip
 
 
 class Motor:
