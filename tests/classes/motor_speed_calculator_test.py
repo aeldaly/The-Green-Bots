@@ -115,8 +115,8 @@ def test_move_more_inplace_left():
 
     msc.move_more_inplace_left()
 
-    expect(lm.speed).to(equal(-55))
-    expect(rm.speed).to(equal(55))
+    expect(lm.speed).to(equal(-60))
+    expect(rm.speed).to(equal(60))
 
 
 def test_move_more_inplace_right():
@@ -125,8 +125,8 @@ def test_move_more_inplace_right():
 
     msc.move_more_inplace_right()
 
-    expect(lm.speed).to(equal(55))
-    expect(rm.speed).to(equal(-55))
+    expect(lm.speed).to(equal(60))
+    expect(rm.speed).to(equal(-60))
 
 
 def test_move_less_inplace_left():
@@ -135,8 +135,8 @@ def test_move_less_inplace_left():
 
     msc.move_less_inplace_left()
 
-    expect(lm.speed).to(equal(-45))
-    expect(rm.speed).to(equal(45))
+    expect(lm.speed).to(equal(-40))
+    expect(rm.speed).to(equal(40))
 
 
 def test_move_less_inplace_right():
@@ -145,8 +145,8 @@ def test_move_less_inplace_right():
 
     msc.move_less_inplace_right()
 
-    expect(lm.speed).to(equal(45))
-    expect(rm.speed).to(equal(-45))
+    expect(lm.speed).to(equal(40))
+    expect(rm.speed).to(equal(-40))
 
 
 def test_reverse():

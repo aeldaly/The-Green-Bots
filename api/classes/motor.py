@@ -1,5 +1,5 @@
 import os
-from ..utils.clip import _clip
+from api.utils.clip import _clip
 
 import importlib.util
 try:
