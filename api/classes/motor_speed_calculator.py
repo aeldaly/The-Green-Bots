@@ -7,16 +7,16 @@ class MotorAbstraction:
         self.speed = 0
 
     def forward_increase(self, turning=True):
-        self.speed = clip(ForwardMotorCommands.increase_speed(self.speed, turning))
+        self.speed = clip(ForwardMotorCommands.increase_speed(self.speed, turning), -100)
 
     def forward_decrease(self, turning=True):
-        self.speed = clip(ForwardMotorCommands.decrease_speed(self.speed, turning))
+        self.speed = clip(ForwardMotorCommands.decrease_speed(self.speed, turning), -100)
 
     def reverse_increase(self, turning=True):
-        self.speed = clip(ReverseMotorCommands.increase_speed(self.speed, turning))
+        self.speed = clip(ReverseMotorCommands.increase_speed(self.speed, turning), -100)
 
     def reverse_decrease(self, turning=True):
-        self.speed = clip(ReverseMotorCommands.decrease_speed(self.speed, turning))
+        self.speed = clip(ReverseMotorCommands.decrease_speed(self.speed, turning), -100)
 
 
 class LeftMotor(MotorAbstraction):
