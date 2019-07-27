@@ -1,5 +1,12 @@
-import RPi.GPIO as GPIO
-from api.utils.clip import _clip
+import os
+from ..utils.clip import _clip
+
+import importlib.util
+try:
+    importlib.util.find_spec('RPi.GPIO')
+    import RPi.GPIO as GPIO
+except ImportError:
+    import FakeRPi.GPIO as GPIO
 
 
 class Motor:
