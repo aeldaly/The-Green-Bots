@@ -59,7 +59,6 @@ class ReverseMotorCommands:
 
 class MotorSpeedCalculator:
     def __init__(self):
-        self._speed_increment = constants.SPEED_INCREMENT
         self.left_motor = LeftMotor()
         self.right_motor = RightMotor()
 
@@ -121,15 +120,15 @@ class MotorSpeedCalculator:
 
     # absolute drive commands
     def reverse(self):
-        self.left_motor.speed = self.right_motor.speed = (-1 * self._speed_increment)
+        self.left_motor.speed = self.right_motor.speed = (-1 * STRAIGHT_SPEED_INCREMENT)
 
     def move_forward(self):
-        self.left_motor.speed = self.right_motor.speed = self._speed_increment
+        self.left_motor.speed = self.right_motor.speed = STRAIGHT_SPEED_INCREMENT
 
     def move_inplace_left(self):
-        self.left_motor.speed = -1 * self._speed_increment
-        self.right_motor.speed = self._speed_increment
+        self.left_motor.speed = -1 * STRAIGHT_SPEED_INCREMENT
+        self.right_motor.speed = STRAIGHT_SPEED_INCREMENT
 
     def move_inplace_right(self):
-        self.left_motor.speed = self._speed_increment
-        self.right_motor.speed = -1 * self._speed_increment
+        self.left_motor.speed = STRAIGHT_SPEED_INCREMENT
+        self.right_motor.speed = -1 * STRAIGHT_SPEED_INCREMENT
