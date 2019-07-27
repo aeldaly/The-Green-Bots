@@ -33,6 +33,7 @@ class Driver:
         self._set_state(speeds)
 
     def _set_state(self, speeds):
+        self._state.pop('old_state', None)
         old_state = self._state
 
         self._state = {
