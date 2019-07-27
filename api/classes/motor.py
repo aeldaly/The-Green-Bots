@@ -23,11 +23,12 @@ class Motor:
         GPIO.setup(self.control_pin, GPIO.OUT)
 
         self._speed_control = GPIO.PWM(self.control_pin, frequency)
+        self._speed_control.start(0)
         self.speed = 0
 
     def _set_speed(self, speed):
         speed = _clip(abs(speed))
-        self._speed_control.start(speed)
+        self._speed_control.ChangeDutyCycle(speed)
         return speed
 
     def _set_direction_and_speed(self, direction, speed_percent):
