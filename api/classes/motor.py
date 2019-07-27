@@ -1,5 +1,5 @@
 import os
-from api.utils.clip import _clip
+from api.utils.clip import clip
 
 import importlib.util
 try:
@@ -24,40 +24,37 @@ class Motor:
 
         self._speed_control = GPIO.PWM(self.control_pin, frequency)
         self._speed_control.start(0)
-        self.speed = 0
 
     def _set_speed(self, speed):
-        speed = _clip(abs(speed))
+        speed = clip(abs(speed))
         self._speed_control.ChangeDutyCycle(speed)
         return speed
 
-    def _set_direction_and_speed(self, direction, speed_percent):
+    def _set_direction(self, direction):
         if direction == 'forward':
             GPIO.output(self.forward_pin, GPIO.HIGH)
             GPIO.output(self.reverse_pin, GPIO.LOW)
-            polarity = 1
         else:
             GPIO.output(self.forward_pin, GPIO.LOW)
             GPIO.output(self.reverse_pin, GPIO.HIGH)
-            polarity = -1
-
-        self.speed = (polarity * self._set_speed(speed_percent))
 
     def _forward(self, speed_percent):
-        self._set_direction_and_speed('forward', speed_percent)
+        self._set_direction('forward')
+        return self._set_speed(speed_percent)
 
     def _reverse(self, speed_percent):
-        self._set_direction_and_speed('reverse', speed_percent)
+        self._set_direction('reverse')
+        return self._set_speed(speed_percent)
 
     def _stop(self):
         return self._set_speed(0)
 
     def move(self, speed_percent):
         if speed_percent == 0:
-            self._stop()
+            speed = self._stop()
         elif speed_percent < 0:
-            self._reverse(speed_percent)
+            speed = self._reverse(speed_percent)
         else:
-            self._forward(speed_percent)
+            speed = self._forward(speed_percent)
 
-        return self.speed
+        return speed

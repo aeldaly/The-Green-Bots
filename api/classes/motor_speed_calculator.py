@@ -1,3 +1,4 @@
+from api.utils.clip import clip
 from . import constants
 
 
@@ -6,16 +7,16 @@ class MotorAbstraction:
         self.speed = 0
 
     def forward_increase(self, turning=True):
-        self.speed = ForwardMotorCommands.increase_speed(self.speed, turning)
+        self.speed = clip(ForwardMotorCommands.increase_speed(self.speed, turning))
 
     def forward_decrease(self, turning=True):
-        self.speed = ForwardMotorCommands.decrease_speed(self.speed, turning)
+        self.speed = clip(ForwardMotorCommands.decrease_speed(self.speed, turning))
 
     def reverse_increase(self, turning=True):
-        self.speed = ReverseMotorCommands.increase_speed(self.speed, turning)
+        self.speed = clip(ReverseMotorCommands.increase_speed(self.speed, turning))
 
     def reverse_decrease(self, turning=True):
-        self.speed = ReverseMotorCommands.decrease_speed(self.speed, turning)
+        self.speed = clip(ReverseMotorCommands.decrease_speed(self.speed, turning))
 
 
 class LeftMotor(MotorAbstraction):
