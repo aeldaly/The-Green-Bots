@@ -1,15 +1,15 @@
 var img = document.getElementById("liveImg");
 var fpsText = document.getElementById("fps");
 
-var target_fps = 24;
+var target_fps = 40;
 
 var request_start_time = performance.now();
 var start_time = performance.now();
 var time = 0;
 var request_time = 0;
-var time_smoothing = 0.9; // larger=more smoothing
+var time_smoothing = 0.3; // larger=more smoothing
 var request_time_smoothing = 0.2; // larger=more smoothing
-var target_time = 1000 / target_fps;
+var target_time = 100 / target_fps;
 
 var wsCamera;
 var wsDrive;

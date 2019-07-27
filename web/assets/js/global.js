@@ -129,5 +129,4 @@ $(document).ready(function() {
   } else {
     alert("WebSocket not supported");
   }
-
 });
