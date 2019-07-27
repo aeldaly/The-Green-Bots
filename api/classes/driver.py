@@ -1,7 +1,7 @@
 from . import constants
 from .motor import Motor
 from .direction_resolver import DirectionResolver
-from .speed_resolver import SpeedResolver
+from .motor_speed_resolver import MotorSpeedResolver
 
 
 class Driver:
@@ -11,7 +11,7 @@ class Driver:
         self._right_motor = Motor(right_motor_pins)
 
         self.direction_resolver = DirectionResolver()
-        self.speed_resolver = SpeedResolver()
+        self.speed_resolver = MotorSpeedResolver()
 
         self.stop()
 
