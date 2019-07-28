@@ -40,16 +40,15 @@ class DirectionResolver:
             (self._ml_speed < 0 and self._mr_speed == 0) or \
             (self._ml_speed == 0 and self._mr_speed < 0)
 
-    def _is_stopped(self):
-        self._ml_speed == 0 and self._mr_speed == 0
-
     def resolve(self, speeds):
         self._ml_speed = speeds['left_motor_speed']
         self._mr_speed = speeds['right_motor_speed']
 
-        if self._is_stopped():
+        if self._ml_speed == 0 and self._mr_speed == 0:
             self.direction = constants.DIRECTION_NONE
-        elif self._is_forward_direction():
+            return self.direction
+
+        if self._is_forward_direction():
             self._resolve_forward_direction()
         elif self._is_reverse_direction():
             self._resolve_reverse_direction()
