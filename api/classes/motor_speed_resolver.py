@@ -101,4 +101,4 @@ class MotorSpeedResolver:
         else:
             self._resolve_from_stopped_state()
 
-        return self._motor_speed_calculator.speeds
+        return self._motor_speed_calculator.speeds()
