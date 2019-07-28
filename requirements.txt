@@ -6,3 +6,5 @@ pillow
 pygame
 RPi.GPIO
 jupyter
+nose
+expects
