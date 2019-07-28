@@ -135,7 +135,7 @@ class MotorSpeedCalculator:
         self.right_motor.speed = -1 * STRAIGHT_SPEED_INCREMENT
 
     def speeds(self):
-        {
+        return {
             'left_motor_speed': self.left_motor.speed,
             'right_motor_speed': self.right_motor.speed
         }
