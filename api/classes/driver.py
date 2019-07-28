@@ -19,10 +19,7 @@ class Driver:
         self.stop()
 
     def _current_direction(self):
-        left_motor_speed = self._state['left_motor_speed']
-        right_motor_speed = self._state['right_motor_speed']
-
-        return self.direction_resolver.resolve(left_motor_speed, right_motor_speed)
+        return self.direction_resolver.resolve(self._state)
 
     def _set_speed(self, target_action):
         speeds = self.speed_resolver.resolve(self._state, target_action)

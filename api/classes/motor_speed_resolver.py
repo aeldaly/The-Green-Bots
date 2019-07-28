@@ -3,11 +3,6 @@ from .motor_speed_calculator import MotorSpeedCalculator
 
 
 class MotorSpeedResolver:
-    def __init__(self):
-        self._motor_speed_calculator = MotorSpeedCalculator()
-        # self.left_motor_speed = 0
-        # self.right_motor_speed = 0
-
     def _resolve_forward_direction(self):
         if self._target_action == constants.TARGET_ACTION_FORWARD:
             self._motor_speed_calculator.increase_forward_speed()
@@ -85,9 +80,7 @@ class MotorSpeedResolver:
     def resolve(self, state, target_action):
         self._target_action = target_action
         current_direction = state['current_direction']
-        # self._motor_speed_calculator = MotorSpeedCalculator(state['left_motor_speed'], state['right_motor_speed'])
-        self._motor_speed_calculator.left_motor.speed = state['left_motor_speed']
-        self._motor_speed_calculator.right_motor.speed = state['right_motor_speed']
+        self._motor_speed_calculator = MotorSpeedCalculator(state)
 
         if current_direction == constants.DIRECTION_FORWARD:
             self._resolve_forward_direction()
@@ -108,7 +101,4 @@ class MotorSpeedResolver:
         else:
             self._resolve_from_stopped_state()
 
-        return {
-            'left_motor_speed': self._motor_speed_calculator.left_motor.speed,
-            'right_motor_speed': self._motor_speed_calculator.right_motor.speed
-        }
+        return self._motor_speed_calculator.speeds

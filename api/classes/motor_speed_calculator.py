@@ -3,8 +3,8 @@ from . import constants
 
 
 class MotorAbstraction:
-    def __init__(self):
-        self.speed = 0
+    def __init__(self, speed):
+        self.speed = speed
 
     def forward_increase(self, turning=True):
         self.speed = clip(ForwardMotorCommands.increase_speed(self.speed, turning), -100)
@@ -59,9 +59,9 @@ class ReverseMotorCommands:
 
 
 class MotorSpeedCalculator:
-    def __init__(self):
-        self.left_motor = LeftMotor()
-        self.right_motor = RightMotor()
+    def __init__(self, state):
+        self.left_motor = LeftMotor(state['left_motor_speed'])
+        self.right_motor = RightMotor(state['right_motor_speed'])
 
     def equalise_speed(self, operation='max'):
         if operation == 'max':
@@ -133,3 +133,9 @@ class MotorSpeedCalculator:
     def move_inplace_right(self):
         self.left_motor.speed = STRAIGHT_SPEED_INCREMENT
         self.right_motor.speed = -1 * STRAIGHT_SPEED_INCREMENT
+
+    def speeds(self):
+        {
+            'left_motor_speed': self.left_motor.speed,
+            'right_motor_speed': self.right_motor.speed
+        }
