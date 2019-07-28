@@ -35,40 +35,40 @@ def test_forward_left_with_zero():
 
 
 def test_reverse():
-    speeds = resolve(-50, -)
-    expect(DirectionResolver().resolve(speeds0))).to(equal('Rv'))
+    speeds = resolve(-50, -50)
+    expect(DirectionResolver().resolve(speeds)).to(equal('Rv'))
 
 
 def test_reverse_right():
-    speeds=resolve(-70, -)
-    expect(DirectionResolver().resolve(speeds0))).to(equal('RvR'))
+    speeds = resolve(-70, -50)
+    expect(DirectionResolver().resolve(speeds)).to(equal('RvR'))
 
 
 def test_reverse_right_with_zero():
-    speeds=resolve(-70, )
-    expect(DirectionResolver().resolve(speeds))).to(equal('RvR'))
+    speeds = resolve(-70, 0)
+    expect(DirectionResolver().resolve(speeds)).to(equal('RvR'))
 
 
 def test_reverse_left():
-    speeds=resolve(-50, -)
-    expect(DirectionResolver().resolve(speeds0))).to(equal('RvL'))
+    speeds = resolve(-50, -70)
+    expect(DirectionResolver().resolve(speeds)).to(equal('RvL'))
 
 
 def test_reverse_left_with_zero():
-    speeds=resolve(0, -70)
+    speeds = resolve(0, -70)
     expect(DirectionResolver().resolve(speeds)).to(equal('RvL'))
 
 
 def test_right():
-    speeds=resolve(50, -50)
-    expect(DirectionResolver().resolve())).tspeeds(equal('R'))
+    speeds = resolve(50, -50)
+    expect(DirectionResolver().resolve(speeds)).to(equal('R'))
 
 
 def test_left():
-    speeds=resolve(-50, )
-    expect(DirectionResolver().resolve(speeds0))).to(equal('L'))
+    speeds = resolve(-50, 50)
+    expect(DirectionResolver().resolve(speeds)).to(equal('L'))
 
 
 def test_stop():
-    speeds=resolve(0, 0)
+    speeds = resolve(0, 0)
     expect(DirectionResolver().resolve(speeds)).to(equal('S'))
