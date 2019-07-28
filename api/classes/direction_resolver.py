@@ -44,8 +44,8 @@ class DirectionResolver:
         self._ml_speed == 0 and self._mr_speed == 0
 
     def resolve(self, speeds):
-        self._ml_speed = speeds['motor_left_speed']
-        self._mr_speed = speeds['motor_right_speed']
+        self._ml_speed = speeds['left_motor_speed']
+        self._mr_speed = speeds['right_motor_speed']
 
         if self._is_stopped():
             self.direction = constants.DIRECTION_NONE
