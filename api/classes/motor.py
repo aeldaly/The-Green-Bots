@@ -53,7 +53,7 @@ class Motor:
         if speed_percent == 0:
             speed = self._stop()
         elif speed_percent < 0:
-            speed = self._reverse(speed_percent)
+            speed = -1 * self._reverse(speed_percent)
         else:
             speed = self._forward(speed_percent)
 
