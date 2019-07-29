@@ -1,6 +1,6 @@
 from api.utils.clip import clip
 from . import constants
-
+import numpy
 
 class MotorAbstraction:
     def __init__(self, speed):
@@ -31,15 +31,20 @@ TURNING_SPEED_INCREMENT = STRAIGHT_SPEED_INCREMENT / 2
 
 
 class ForwardMotorCommands:
+
     @staticmethod
     def increase_speed(speed, turning):
-        incremental_speed = TURNING_SPEED_INCREMENT if turning is True else STRAIGHT_SPEED_INCREMENT
+        speed = clip(speed, -100)
+        speed_increase_increament = lambda speed: min(100, int(numpy.logspace(0, 2, 101)[speed]))
+        incremental_speed = speed_increase_increament(speed) if turning is True else STRAIGHT_SPEED_INCREMENT
         speed += incremental_speed
         return speed
 
     @staticmethod
     def decrease_speed(speed, turning):
-        incremental_speed = TURNING_SPEED_INCREMENT if turning is True else STRAIGHT_SPEED_INCREMENT
+        speed = clip(speed, -100)
+        speed_decrease_increament = lambda speed: min(100, int(numpy.logspace(0, 2, 101)[speed]))
+        incremental_speed = speed_decrease_increament(speed) if turning is True else STRAIGHT_SPEED_INCREMENT
         speed -= incremental_speed
         return speed
 
@@ -47,13 +52,17 @@ class ForwardMotorCommands:
 class ReverseMotorCommands:
     @staticmethod
     def increase_speed(speed, turning):
-        incremental_speed = TURNING_SPEED_INCREMENT if turning is True else STRAIGHT_SPEED_INCREMENT
+        speed = clip(speed, -100)
+        speed_increase_increament = lambda speed: -1 * min(100, int(numpy.logspace(0, 2, 101)[100 - abs(speed)]))
+        incremental_speed = speed_increase_increament(speed) if turning is True else STRAIGHT_SPEED_INCREMENT
         speed -= incremental_speed
         return speed
 
     @staticmethod
     def decrease_speed(speed, turning):
-        incremental_speed = TURNING_SPEED_INCREMENT if turning is True else STRAIGHT_SPEED_INCREMENT
+        speed = clip(speed, -100)
+        speed_decrease_increament = lambda speed: -1 * min(100, int(numpy.logspace(0, 2, 101)[speed]))
+        incremental_speed = speed_decrease_increament(speed) if turning is True else STRAIGHT_SPEED_INCREMENT
         speed += incremental_speed
         return speed
 
